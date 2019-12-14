@@ -1,0 +1,86 @@
+package search;
+
+
+import javafx.animation.FadeTransition;
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.shape.Line;
+import javafx.stage.Stage;
+
+import java.util.HashMap;
+import java.util.List;
+
+// TODO стоит ли выбрасывать исключения?
+// TODO жадный поиск
+// TODO uniform-cost search
+public class Main extends Application {
+
+    public static void main(String[] args) {
+
+        for (int i = 0; i < args.length ; i++) {
+            System.out.println(i + " " + args[i]);
+
+
+
+        }
+
+        if (args[0] != null){
+            long start = System.currentTimeMillis();
+            String fileName = args[0];
+
+            MapValidator mapValidator = new MapValidator();
+            mapValidator.read(fileName);
+
+            System.out.println("start");
+
+            Node goalNode = new Node();
+            HashMap<Integer, Coordinate> coordinates = new HashMap<>();
+            goalNode.createGoalNode(mapValidator.getSize(), coordinates);
+            IHeuristicFunction heuristicFunction = new IHeuristicFunction(coordinates);
+            goalNode.print();
+            Node initialState = new Node(null, mapValidator.getState(), heuristicFunction);
+            Ida ida = new Ida(heuristicFunction, goalNode);
+            int res = ida.main(initialState);
+            System.out.println("res = " + res);
+//
+
+
+
+            List<Node> path = ida.getPath();
+
+            System.out.println("time complexity = " + (System.currentTimeMillis() - start)/1000 + "sec");
+            int count = 0;
+            for (Node node : path ) {
+                node.print();
+            }
+
+            Application.launch(args);
+
+
+        }
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
+        Button button = new Button("Press me");
+
+        Group group = new Group();
+        group.getChildren().addAll(button);
+
+
+        Scene scene = new Scene(group, 400, 400);
+
+
+//        FadeTransition fadeOut
+//        Line line = new Line(0, 0, 100, 100);
+//        group.getChildren().addAll(line);
+        primaryStage.setTitle("N-puzzle");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+
+    }
+}
