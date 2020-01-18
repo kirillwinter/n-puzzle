@@ -113,6 +113,7 @@ public class MapValidator {
 
     private void checkResolve() {
 
+         //  TODO пока что работает только для обычного расположения( не улиткой)
 
         int inv = 0;
         for (int i=0; i<size * size; ++i)

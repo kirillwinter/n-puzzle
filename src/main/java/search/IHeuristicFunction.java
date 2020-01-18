@@ -36,6 +36,7 @@ public class IHeuristicFunction {
 
     private int getLinearConflict(Node node, int value, int iCopy, int jCopy) {
 
+        // TODO  сделать для улиточной ноды
         int h = 0;
         int i = iCopy;
         int j = jCopy;
@@ -74,6 +75,7 @@ public class IHeuristicFunction {
 
     private int getVerticalLinearConflict(Node node, int value, int i, int j){
 
+        //TODO для улиточной ноды
 
 
 
