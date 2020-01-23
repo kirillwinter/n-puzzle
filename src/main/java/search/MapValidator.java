@@ -122,7 +122,6 @@ public class MapValidator {
             int size = state.length;
             currStateOffsets += size * size - (currZerroPos[0] + currZerroPos[1] * size);
             currStateOffsets += size * size - (goalZerroPos[0] + goalZerroPos[1] * size);
-            throw new PuzzleIsUnsolvableException();
         }
         if (currStateOffsets % 2 != goalStateOffsets % 2)
             throw new PuzzleIsUnsolvableException();
