@@ -4,10 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class MapValidator {
     private List<String> linesList;
@@ -49,7 +46,7 @@ public class MapValidator {
         setMapSize();
         setMapList();
         checkNumberSequence();
-        checkResolve();
+        checkResolve(createGoalNode(state.length, new HashMap<>()));
     }
 
 
@@ -111,26 +108,71 @@ public class MapValidator {
         }
     }
 
-    private void checkResolve() {
+    private void checkResolve(int[][] goalState) {
 
-         //  TODO пока что работает только для обычного расположения( не улиткой)
+        int currStateOffsets = numberOfOffsets(state);
+        int goalStateOffsets = numberOfOffsets(goalState);
+        System.out.println("state Offsets = " + currStateOffsets);
+        System.out.println("goal Offsets = " + goalStateOffsets);
 
-        int inv = 0;
-        for (int i=0; i<size * size; ++i)
-            if (sequence.get(i) != 0)
-                for (int j=0; j<i; ++j)
-                    if (sequence.get(j) > sequence.get(i))
-                        ++inv;
-        for (int i=0; i<size *size; ++i)
-            if (sequence.get(i) == 0)
-                inv += 1 + i / size;
-
-        if (inv % 2 != 0){
-            System.out.println("inv = " + inv);
+        if (state.length % 2 == 0)
+        {
+            int[] currZerroPos = getZerroPos(state);
+            int[] goalZerroPos = getZerroPos(goalState);
+            int size = state.length;
+            currStateOffsets += size * size - (currZerroPos[0] + currZerroPos[1] * size);
+            currStateOffsets += size * size - (goalZerroPos[0] + goalZerroPos[1] * size);
             throw new PuzzleIsUnsolvableException();
         }
+        if (currStateOffsets % 2 != goalStateOffsets % 2)
+            throw new PuzzleIsUnsolvableException();
+    }
 
-        System.out.println("inv = " + inv);
+    int[] getZerroPos(int[][] state) {
+        int[] zerro = new int[2];
+        for (int y = 0; y < state.length; y++) {
+            for (int x = 0; x < state.length; x++) {
+                if (state[y][x] == 0)
+                {
+                    zerro[0] = x;
+                    zerro[1] = y;
+                }
+            }
+        }
+        return zerro;
+    }
+
+    int numberOfOffsets(int[][] state)
+    {
+        int[] sequence = sateToSequence(state);
+        int offsets = 0;
+        for (int i = 0; i < sequence.length - 1; i++)
+        {
+            if (sequence[i] != 0)
+            {
+                for (int j = i + 1; j < sequence.length; j++)
+                {
+                    if (sequence[j] != 0 && sequence[j] < sequence[i])
+                    {
+                        offsets++;
+                    }
+                }
+            }
+        }
+        return offsets;
+    }
+
+    int[] sateToSequence(int[][] state)
+    {
+        int[] sequence = new int[state.length * state.length];
+        for (int y = 0; y < state.length; y++)
+        {
+            for (int x = 0; x < state.length; x++)
+            {
+                sequence[x + y * state.length] = state[y][x];
+            }
+        }
+        return sequence;
     }
 
     int[][] getState() {
@@ -140,4 +182,86 @@ public class MapValidator {
     public Integer getSize() {
         return size;
     }
+
+
+    int[][] createGoalNode(int size, HashMap<Integer, Coordinate> coordinates){
+        int[][] state;
+        state = new int[size][];
+        for (int i = 0; i < size; i++) {
+            state[i] = new int[size];
+        }
+
+//        где side - текущая сторона (0 - вверх, 1 - право, 2 - ...)
+//        sizeX - размер массива по горизонтали
+//        CorrectX - переменная, которая отвечает за автоматическое декриментирование
+//        Count - переменная, которая отвечает за текущую цифру внутри массива
+//        Summ - произведение ширины на высоту, нужно для устранения ошибки (см. Далее)
+//        Mas - название двумерного массива
+//        index - собственно позиция внутри массива
+
+
+        int sizeX = size;
+        int sizeY = size;
+
+        int summ = sizeX * sizeY;
+        int correctY = 0;
+        int correctX = 0;
+        int value = 1;
+        Coordinate coordinate;
+        while( sizeY > 0 )
+        {
+            for ( int side = 0; side < 4; side++ )
+            {
+                for (int index = 0; index < (Math.max(sizeX, sizeY)); index++ )
+                {
+
+                    if (value == summ)
+                        value = 0;
+
+                    if ( side == 0 && index < sizeX - correctX && value <= summ){
+                        coordinate = new  Coordinate();
+                        state[side + correctY][index + correctX] = value;
+                        coordinate.setyPos(side + correctY);
+                        coordinate.setxPos(index + correctX);
+                        coordinates.put(value, coordinate);
+                        value++;
+
+                    }
+
+                    else if ( side == 1 && index < sizeY - correctY && index != 0 && value <= summ ){
+                        coordinate = new  Coordinate();
+                        state[index + correctY][sizeX - 1] = value;
+                        coordinate.setyPos(index + correctY);
+                        coordinate.setxPos(sizeX - 1);
+                        coordinates.put(value, coordinate);
+                        value++;
+                    }
+
+                    else if ( side == 2 && index < sizeX - correctX && index != 0 && value <= summ ){
+                        coordinate = new  Coordinate();
+                        state[sizeY - 1][sizeX - (index + 1)] = value;
+                        coordinate.setyPos(sizeY - 1);
+                        coordinate.setxPos(sizeX - (index + 1));
+                        coordinates.put(value, coordinate);
+                        value++;
+                    }
+
+                    else if ( side == 3 && index < sizeY - ( correctY + 1 ) && index != 0 && value <= summ ){
+                        coordinate = new  Coordinate();
+                        state[sizeY - (index + 1)][correctY] = value;
+                        coordinate.setyPos(sizeY - (index + 1));
+                        coordinate.setxPos(correctY);
+                        coordinates.put(value, coordinate);
+                        value++;
+                    }
+                }
+            }
+            sizeY--;
+            sizeX--;
+            correctY += 1;
+            correctX += 1;
+        }
+        return state;
+    }
+
 }
