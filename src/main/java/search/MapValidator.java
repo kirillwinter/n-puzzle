@@ -121,7 +121,7 @@ public class MapValidator {
             int[] goalZerroPos = getZerroPos(goalState);
             int size = state.length;
             currStateOffsets += size * size - (currZerroPos[0] + currZerroPos[1] * size);
-            currStateOffsets += size * size - (goalZerroPos[0] + goalZerroPos[1] * size);
+            goalStateOffsets += size * size - (goalZerroPos[0] + goalZerroPos[1] * size);
         }
         if (currStateOffsets % 2 != goalStateOffsets % 2)
             throw new PuzzleIsUnsolvableException();
@@ -183,7 +183,7 @@ public class MapValidator {
     }
 
 
-    int[][] createGoalNode(int size, HashMap<Integer, Coordinate> coordinates){
+    public static int[][] createGoalNode(int size, HashMap<Integer, Coordinate> coordinates){
         int[][] state;
         state = new int[size][];
         for (int i = 0; i < size; i++) {
