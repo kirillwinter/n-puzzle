@@ -33,10 +33,17 @@ public class Main {
 
             Node initialState = new Node(null, mapValidator.getState(), heuristicFunction);
 
-            Ida ida = new Ida(heuristicFunction, goalNode);
-            int res = ida.main(initialState);
-            System.out.println("res = " + res);
-            List<Node> path = ida.getPath();
+            List<Node> path;
+
+//            Ida ida = new Ida(heuristicFunction, goalNode);
+//            int res = ida.main(initialState);
+//            System.out.println("res = " + res);
+//            path = ida.getPath();
+
+            Astar astar = new Astar(heuristicFunction, goalNode);
+            int resAstar = astar.main(initialState);
+            System.out.println("Astar, res=" + resAstar);
+            path = astar.getPath();
 
             System.out.println("time complexity = " + (System.currentTimeMillis() - start)/1000 + "sec");
             int count = 0;
