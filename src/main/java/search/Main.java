@@ -13,9 +13,6 @@ public class Main {
 
         for (int i = 0; i < args.length ; i++) {
             System.out.println(i + " " + args[i]);
-
-
-
         }
 
         if (args[0] != null){
@@ -30,16 +27,15 @@ public class Main {
             Node goalNode = new Node();
             HashMap<Integer, Coordinate> coordinates = new HashMap<>();
             goalNode.createGoalNode(mapValidator.getSize(), coordinates);
+
             IHeuristicFunction heuristicFunction = new IHeuristicFunction(coordinates);
             goalNode.print();
+
             Node initialState = new Node(null, mapValidator.getState(), heuristicFunction);
+
             Ida ida = new Ida(heuristicFunction, goalNode);
             int res = ida.main(initialState);
             System.out.println("res = " + res);
-//
-
-
-
             List<Node> path = ida.getPath();
 
             System.out.println("time complexity = " + (System.currentTimeMillis() - start)/1000 + "sec");
@@ -47,9 +43,6 @@ public class Main {
             for (Node node : path ) {
                 node.print();
             }
-
-
-
         }
     }
 }

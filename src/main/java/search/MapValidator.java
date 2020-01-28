@@ -41,7 +41,7 @@ public class MapValidator {
         validate();
     }
 
-        private void validate(){
+    private void validate(){
         delComment();
         setMapSize();
         setMapList();
@@ -66,9 +66,7 @@ public class MapValidator {
                 }
             }
         }
-
         this.linesList = linesList;
-
     }
 
     private void setMapSize() {
@@ -78,7 +76,7 @@ public class MapValidator {
             e.printStackTrace();
             System.exit(1);
         }
-            linesList.remove(0);
+        linesList.remove(0);
     }
 
     private void setMapList() {
@@ -99,7 +97,6 @@ public class MapValidator {
         sequence = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             for (int ii = 0; ii < size; ii++) {
-
                 if (sequence.contains(state[i][ii]) || state[i][ii] > size * size - 1 || state[i][ii] < 0){
                     throw new IllegalArgumentException(String.valueOf(state[i][ii]));
                 }
@@ -119,9 +116,9 @@ public class MapValidator {
         {
             int[] currZerroPos = getZerroPos(state);
             int[] goalZerroPos = getZerroPos(goalState);
-            int size = state.length;
-            currStateOffsets += size * size - (currZerroPos[0] + currZerroPos[1] * size);
-            goalStateOffsets += size * size - (goalZerroPos[0] + goalZerroPos[1] * size);
+            int stateSize = state.length;
+            currStateOffsets += stateSize * stateSize - (currZerroPos[0] + currZerroPos[1] * stateSize);
+            goalStateOffsets += stateSize * stateSize - (goalZerroPos[0] + goalZerroPos[1] * stateSize);
         }
         if (currStateOffsets % 2 != goalStateOffsets % 2)
             throw new PuzzleIsUnsolvableException();
@@ -143,7 +140,7 @@ public class MapValidator {
 
     int numberOfOffsets(int[][] state)
     {
-        int[] sequence = sateToSequence(state);
+        int[] sequence = stateToSequence(state);
         int offsets = 0;
         for (int i = 0; i < sequence.length - 1; i++)
         {
@@ -161,7 +158,7 @@ public class MapValidator {
         return offsets;
     }
 
-    int[] sateToSequence(int[][] state)
+    int[] stateToSequence(int[][] state)
     {
         int[] sequence = new int[state.length * state.length];
         for (int y = 0; y < state.length; y++)
