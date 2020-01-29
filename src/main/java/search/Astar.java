@@ -22,22 +22,40 @@ public class Astar {
         return path;
     }
 
-    public int main(Node initialState) {
+    public int main(Node initialState, int maxQueue, boolean debug) {
+        //TODO : Check memory
         openQueue = new PriorityQueue<>(4, new NodeComparator());
         openQueue.add(initialState);
+
+        int minH = initialState.getH();
         while((currentNode = openQueue.poll()) != null)
         {
+            if (minH > currentNode.getH() && debug)
+            {
+                minH = currentNode.getH();
+                System.out.println("minH: " + minH + " openQueue=" + openQueue.size());
+            }
+
             closeQueue.add(currentNode);
             if (currentNode.equals(goalNode))
-                return 0;
+                return 1;
+
+            int hCurrent = currentNode.getH();
             PriorityQueue<Node> childrens = currentNode.getSuccessors();
             Node children;
             while((children = childrens.poll()) != null)
             {
-                if (!closeQueue.contains(children))
+                int hChildren = children.getH();
+                if (!closeQueue.contains(children)
+                    && !openQueue.contains(children)
+                    && hChildren <= hCurrent + 1
+                    && openQueue.size() <= maxQueue
+                    )
                     openQueue.add(children);
             }
         }
+        System.out.println("A Star not found");
+        System.exit(1);
         return 0;
     }
 

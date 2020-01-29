@@ -4,12 +4,21 @@ package search;
 import java.util.HashMap;
 import java.util.List;
 
+enum eAlhoritm {
+    IDA,
+    ASTAR;
+}
+
 // TODO стоит ли выбрасывать исключения?
 // TODO жадный поиск
 // TODO uniform-cost search
 public class Main {
 
     public static void main(String[] args) {
+
+        eAlhoritm alhoritm;
+//        alhoritm = eAlhoritm.IDA;
+        alhoritm = eAlhoritm.ASTAR;
 
         for (int i = 0; i < args.length ; i++) {
             System.out.println(i + " " + args[i]);
@@ -35,21 +44,32 @@ public class Main {
 
             List<Node> path;
 
-//            Ida ida = new Ida(heuristicFunction, goalNode);
-//            int res = ida.main(initialState);
-//            System.out.println("res = " + res);
-//            path = ida.getPath();
-
-            Astar astar = new Astar(heuristicFunction, goalNode);
-            int resAstar = astar.main(initialState);
-            System.out.println("Astar, res=" + resAstar);
-            path = astar.getPath();
-
-            System.out.println("time complexity = " + (System.currentTimeMillis() - start)/1000 + "sec");
-            int count = 0;
-            for (Node node : path ) {
-                node.print();
+            switch (alhoritm)
+            {
+                case IDA:
+                    Ida ida = new Ida(heuristicFunction, goalNode);
+                    int res = ida.main(initialState);
+                    System.out.println("res = " + res);
+                    path = ida.getPath();
+                    break;
+                case ASTAR:
+                    Astar astar = new Astar(heuristicFunction, goalNode);
+                    int resAstar = astar.main(initialState, 4, true);
+                    System.out.println("Astar, res=" + resAstar);
+                    path = astar.getPath();
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + alhoritm);
             }
+
+
+           System.out.println("time complexity = " + (System.currentTimeMillis() - start)/1000 + "sec");
+           int count = 0;
+           for (Node node : path ) {
+               System.out.println("h=" + node.getH());
+               node.print();
+           }
+            System.out.println("steps=" + path.size());
         }
     }
 }
