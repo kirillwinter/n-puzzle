@@ -9,6 +9,7 @@ import search.Node;
 import search.algorithm.Astar;
 import search.algorithm.Ida;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,30 +22,66 @@ public class Main {
 
     public static void main(String[] args) {
 
-        AlgorithmEnum alhoritm;
-//        alhoritm = eAlhoritm.IDA;
-        alhoritm = AlgorithmEnum.ASTAR;
+        // TODO  теряются рещения при  ASTAR
+
+        // установка дефолтных значений
+        AlgorithmEnum algorithm;
+        algorithm = AlgorithmEnum.IDA;
+        GoalStateEnum goalStateArg;
+        goalStateArg = GoalStateEnum.SNAKE;;
 
         for (int i = 0; i < args.length ; i++) {
             System.out.println(i + " " + args[i]);
         }
 
         if (args[0] != null){
+
+            // чтение аргументов
+            for (int i = 1; i < args.length; i++) {
+                String arg = args[i];
+                if (arg.compareToIgnoreCase("-astar") == 0){
+                    algorithm = AlgorithmEnum.ASTAR;
+                } else if (arg.compareToIgnoreCase("-ida") == 0){
+                    algorithm = AlgorithmEnum.IDA;
+                } else if (arg.compareToIgnoreCase("-snake") == 0){
+                    goalStateArg = GoalStateEnum.SNAKE;
+                } else if (arg.compareToIgnoreCase("-first_zero") == 0){
+                    goalStateArg = GoalStateEnum.FIRST_ZERO;
+                } else if (arg.compareToIgnoreCase("-last_zero") == 0){
+                    goalStateArg = GoalStateEnum.LAST_ZERO;
+                } else {
+                    System.err.println("Invalid arg: " + arg);
+                    System.exit(1);
+                }
+            }
+
+
+
+
             long start = System.currentTimeMillis();
             String fileName = args[0];
 
             MapValidator mapValidator = new MapValidator();
             mapValidator.read(fileName);
-
             System.out.println("start");
 
             Node goalNode = new Node();
 
-
-
-
             HashMap<Integer, Coordinate> coordinatesGoalNode = new HashMap<>();
-            goalNode.setState(GoalNodeCreator.createFirstZeroGoalNode(mapValidator.getSize(), coordinatesGoalNode));
+
+            switch (goalStateArg){
+                case SNAKE:
+                    goalNode.setState(GoalNodeCreator.createSnakeGoalNode(mapValidator.getSize(), coordinatesGoalNode));
+                    break;
+                case FIRST_ZERO:
+                    goalNode.setState(GoalNodeCreator.createFirstZeroGoalNode(mapValidator.getSize(), coordinatesGoalNode));
+                    break;
+                case LAST_ZERO:
+                    goalNode.setState(GoalNodeCreator.createLastZeroGoalNode(mapValidator.getSize(), coordinatesGoalNode));
+                    break;
+            }
+
+//            goalNode.setState(GoalNodeCreator.createLastZeroGoalNode(mapValidator.getSize(), coordinatesGoalNode));
             goalNode.print();
             mapValidator.checkResolve(goalNode.getState());
             IHeuristicFunction heuristicFunction = new IHeuristicFunction(coordinatesGoalNode);
@@ -54,22 +91,22 @@ public class Main {
 
             List<Node> path;
 
-            switch (alhoritm)
+            switch (algorithm)
             {
                 case IDA:
                     Ida ida = new Ida(heuristicFunction, goalNode);
                     int res = ida.main(initialState);
-                    System.out.println("res = " + res);
+                    System.out.println("Ida, res = " + res);
                     path = ida.getPath();
                     break;
                 case ASTAR:
                     Astar astar = new Astar(heuristicFunction, goalNode);
-                    int resAstar = astar.main(initialState, 500, true);
+                    int resAstar = astar.main(initialState, 500000, true);
                     System.out.println("Astar, res=" + resAstar);
                     path = astar.getPath();
                     break;
                 default:
-                    throw new IllegalStateException("Unexpected value: " + alhoritm);
+                    throw new IllegalStateException("Unexpected value: " + algorithm);
             }
 
 

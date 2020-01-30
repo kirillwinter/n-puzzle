@@ -1,5 +1,7 @@
 package search;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -35,9 +37,9 @@ public class MapValidator {
                 line = reader.readLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Reading file error, filename: " + fileName);
+            System.exit(1);
         }
-
         validate();
     }
 
@@ -72,7 +74,7 @@ public class MapValidator {
         try {
             size = Integer.parseInt(linesList.get(0));
         } catch (Exception e){
-            e.printStackTrace();
+            System.err.println("ERROR: Invalid value size: " + linesList.get(0));
             System.exit(1);
         }
         linesList.remove(0);
@@ -103,6 +105,57 @@ public class MapValidator {
             }
         }
     }
+
+
+
+    // ------------------------
+
+
+//    public void checkResolve(int[][] goalState) {
+//
+//         int invGoal = calculateInv(goalState);
+//         int invCur = calculateInv(this.state);
+//
+//        System.out.println("invGoal = " + invGoal);
+//        System.out.println("invCur = " + invCur);
+//
+////        if (inv % 2 != 0){
+////            System.out.println("inv = " + inv);
+////            throw new PuzzleIsUnsolvableException();
+////        }
+////
+////        System.out.println("inv = " + inv);
+//    }
+//
+//    private int calculateInv(int[][] state){
+//
+//        List<Integer> sequence = new ArrayList<>();
+//        for (int i = 0; i < size; i++) {
+//            for (int j = 0; j < size; j++) {
+//                if (sequence.contains(state[i][j]) || state[i][j] > size * size - 1 || state[i][j] < 0){
+//                    throw new IllegalArgumentException(String.valueOf(state[i][j]));
+//                }
+//                sequence.add(state[i][j]);
+//            }
+//        }
+//
+//        int inv = 0;
+//        int size = state.length;
+//        for (int i=0; i<size * size; ++i)
+//            if (sequence.get(i) != 0)
+//                for (int j=0; j<i; ++j)
+//                    if (sequence.get(j) > sequence.get(i))
+//                        ++inv;
+//        for (int i=0; i<size *size; ++i) {
+//            if (sequence.get(i) == 0)
+//                inv += 1 + i / size;
+//        }
+//
+//        return inv;
+//
+//    }
+
+// -----------------------------
 
     public void checkResolve(int[][] goalState) {
 
