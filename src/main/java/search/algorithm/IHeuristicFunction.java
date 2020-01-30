@@ -1,14 +1,17 @@
-package search;
+package search.algorithm;
 
+
+import search.Coordinate;
+import search.Node;
 
 import java.util.HashMap;
 
 public class IHeuristicFunction {
 
-    private HashMap<Integer, Coordinate> coordinates;
+    private HashMap<Integer, Coordinate> coordinatesGoalNode;
 
-    public IHeuristicFunction(HashMap<Integer, Coordinate> coordinates) {
-        this.coordinates = coordinates;
+    public IHeuristicFunction(HashMap<Integer, Coordinate> coordinatesGoalNode) {
+        this.coordinatesGoalNode = coordinatesGoalNode;
     }
 
     public int calculateHeuristic(Node node, Node goalNode){
@@ -33,7 +36,7 @@ public class IHeuristicFunction {
 
         if (value == 0)
             return 0;
-        Coordinate coordinate = coordinates.get(value);
+        Coordinate coordinate = coordinatesGoalNode.get(value);
         int dist = Math.abs(coordinate.getxPos() - j) + Math.abs(coordinate.getyPos() - i);
         return (dist);
     }
@@ -59,8 +62,8 @@ public class IHeuristicFunction {
     }
 
     private boolean checkSequence(Node node, Node goalNode, int y, int x, int y2, int x2) {
-        Coordinate goalPos = coordinates.get(node.getState()[y][x]);
-        Coordinate goalPos2 = coordinates.get(node.getState()[y2][x2]);
+        Coordinate goalPos = coordinatesGoalNode.get(node.getState()[y][x]);
+        Coordinate goalPos2 = coordinatesGoalNode.get(node.getState()[y2][x2]);
 
 
         int currDeltaY = y2 - y;

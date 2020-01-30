@@ -1,4 +1,6 @@
-package search;
+package search.algorithm;
+
+import search.Node;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -63,7 +65,7 @@ public class Ida {
 
     }
 
-    int main(Node root){
+    public int main(Node root){
 
         System.out.println("h = " + this.heuristicFunction.calculateHeuristic(root, goalNode));
 

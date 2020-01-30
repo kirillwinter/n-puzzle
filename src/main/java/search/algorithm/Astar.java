@@ -1,4 +1,7 @@
-package search;
+package search.algorithm;
+
+import search.Node;
+import search.NodeComparator;
 
 import java.util.ArrayList;
 import java.util.HashSet;

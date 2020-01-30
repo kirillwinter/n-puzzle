@@ -13,11 +13,11 @@ public class MapValidator {
     private List<Integer> sequence;
 
 
-     MapValidator() {
+     public MapValidator() {
         this.linesList = new ArrayList<>();
     }
 
-    void read(String fileName){
+    public void read(String fileName){
 
         try {
             File file = new File(fileName);
@@ -46,8 +46,6 @@ public class MapValidator {
         setMapSize();
         setMapList();
         checkNumberSequence();
-        int[][] goalNode = createGoalNode(state.length, new HashMap<>());
-        checkResolve(goalNode);
     }
 
 
@@ -97,16 +95,16 @@ public class MapValidator {
 
         sequence = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            for (int ii = 0; ii < size; ii++) {
-                if (sequence.contains(state[i][ii]) || state[i][ii] > size * size - 1 || state[i][ii] < 0){
-                    throw new IllegalArgumentException(String.valueOf(state[i][ii]));
+            for (int j = 0; j < size; j++) {
+                if (sequence.contains(state[i][j]) || state[i][j] > size * size - 1 || state[i][j] < 0){
+                    throw new IllegalArgumentException(String.valueOf(state[i][j]));
                 }
-                sequence.add(state[i][ii]);
+                sequence.add(state[i][j]);
             }
         }
     }
 
-    private void checkResolve(int[][] goalState) {
+    public void checkResolve(int[][] goalState) {
 
         int currStateOffsets = numberOfOffsets(state);
         int goalStateOffsets = numberOfOffsets(goalState);
@@ -115,28 +113,28 @@ public class MapValidator {
 
         if (state.length % 2 == 0)
         {
-            int[] currZerroPos = getZerroPos(state);
-            int[] goalZerroPos = getZerroPos(goalState);
+            int[] currZeroPos = getZeroPos(state);
+            int[] goalZeroPos = getZeroPos(goalState);
             int stateSize = state.length;
-            currStateOffsets += stateSize * stateSize - (currZerroPos[0] + currZerroPos[1] * stateSize);
-            goalStateOffsets += stateSize * stateSize - (goalZerroPos[0] + goalZerroPos[1] * stateSize);
+            currStateOffsets += stateSize * stateSize - (currZeroPos[0] + currZeroPos[1] * stateSize);
+            goalStateOffsets += stateSize * stateSize - (goalZeroPos[0] + goalZeroPos[1] * stateSize);
         }
         if (currStateOffsets % 2 != goalStateOffsets % 2)
             throw new PuzzleIsUnsolvableException();
     }
 
-    int[] getZerroPos(int[][] state) {
-        int[] zerro = new int[2];
+    int[] getZeroPos(int[][] state) {
+        int[] zero = new int[2];
         for (int y = 0; y < state.length; y++) {
             for (int x = 0; x < state.length; x++) {
                 if (state[y][x] == 0)
                 {
-                    zerro[0] = x;
-                    zerro[1] = y;
+                    zero[0] = x;
+                    zero[1] = y;
                 }
             }
         }
-        return zerro;
+        return zero;
     }
 
     int numberOfOffsets(int[][] state)
@@ -172,7 +170,7 @@ public class MapValidator {
         return sequence;
     }
 
-    int[][] getState() {
+    public int[][] getState() {
         return state;
     }
 
@@ -181,84 +179,6 @@ public class MapValidator {
     }
 
 
-    public static int[][] createGoalNode(int size, HashMap<Integer, Coordinate> coordinates){
-        int[][] state;
-        state = new int[size][];
-        for (int i = 0; i < size; i++) {
-            state[i] = new int[size];
-        }
 
-//        где side - текущая сторона (0 - вверх, 1 - право, 2 - ...)
-//        sizeX - размер массива по горизонтали
-//        CorrectX - переменная, которая отвечает за автоматическое декриментирование
-//        Count - переменная, которая отвечает за текущую цифру внутри массива
-//        Summ - произведение ширины на высоту, нужно для устранения ошибки (см. Далее)
-//        Mas - название двумерного массива
-//        index - собственно позиция внутри массива
-
-
-        int sizeX = size;
-        int sizeY = size;
-
-        int summ = sizeX * sizeY;
-        int correctY = 0;
-        int correctX = 0;
-        int value = 1;
-        Coordinate coordinate;
-        while( sizeY > 0 )
-        {
-            for ( int side = 0; side < 4; side++ )
-            {
-                for (int index = 0; index < (Math.max(sizeX, sizeY)); index++ )
-                {
-
-                    if (value == summ)
-                        value = 0;
-
-                    if ( side == 0 && index < sizeX - correctX && value <= summ){
-                        coordinate = new  Coordinate();
-                        state[side + correctY][index + correctX] = value;
-                        coordinate.setyPos(side + correctY);
-                        coordinate.setxPos(index + correctX);
-                        coordinates.put(value, coordinate);
-                        value++;
-
-                    }
-
-                    else if ( side == 1 && index < sizeY - correctY && index != 0 && value <= summ ){
-                        coordinate = new  Coordinate();
-                        state[index + correctY][sizeX - 1] = value;
-                        coordinate.setyPos(index + correctY);
-                        coordinate.setxPos(sizeX - 1);
-                        coordinates.put(value, coordinate);
-                        value++;
-                    }
-
-                    else if ( side == 2 && index < sizeX - correctX && index != 0 && value <= summ ){
-                        coordinate = new  Coordinate();
-                        state[sizeY - 1][sizeX - (index + 1)] = value;
-                        coordinate.setyPos(sizeY - 1);
-                        coordinate.setxPos(sizeX - (index + 1));
-                        coordinates.put(value, coordinate);
-                        value++;
-                    }
-
-                    else if ( side == 3 && index < sizeY - ( correctY + 1 ) && index != 0 && value <= summ ){
-                        coordinate = new  Coordinate();
-                        state[sizeY - (index + 1)][correctY] = value;
-                        coordinate.setyPos(sizeY - (index + 1));
-                        coordinate.setxPos(correctY);
-                        coordinates.put(value, coordinate);
-                        value++;
-                    }
-                }
-            }
-            sizeY--;
-            sizeX--;
-            correctY += 1;
-            correctX += 1;
-        }
-        return state;
-    }
 
 }

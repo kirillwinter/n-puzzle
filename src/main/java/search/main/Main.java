@@ -1,13 +1,18 @@
-package search;
+package search.main;
 
+
+import search.Coordinate;
+import search.GoalNodeCreator;
+import search.algorithm.IHeuristicFunction;
+import search.MapValidator;
+import search.Node;
+import search.algorithm.Astar;
+import search.algorithm.Ida;
 
 import java.util.HashMap;
 import java.util.List;
 
-enum eAlhoritm {
-    IDA,
-    ASTAR;
-}
+
 
 // TODO стоит ли выбрасывать исключения?
 // TODO жадный поиск
@@ -16,9 +21,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        eAlhoritm alhoritm;
+        AlgorithmEnum alhoritm;
 //        alhoritm = eAlhoritm.IDA;
-        alhoritm = eAlhoritm.ASTAR;
+        alhoritm = AlgorithmEnum.ASTAR;
 
         for (int i = 0; i < args.length ; i++) {
             System.out.println(i + " " + args[i]);
@@ -34,10 +39,15 @@ public class Main {
             System.out.println("start");
 
             Node goalNode = new Node();
-            HashMap<Integer, Coordinate> coordinates = new HashMap<>();
-            goalNode.createGoalNode(mapValidator.getSize(), coordinates);
 
-            IHeuristicFunction heuristicFunction = new IHeuristicFunction(coordinates);
+
+
+
+            HashMap<Integer, Coordinate> coordinatesGoalNode = new HashMap<>();
+            goalNode.setState(GoalNodeCreator.createFirstZeroGoalNode(mapValidator.getSize(), coordinatesGoalNode));
+            goalNode.print();
+            mapValidator.checkResolve(goalNode.getState());
+            IHeuristicFunction heuristicFunction = new IHeuristicFunction(coordinatesGoalNode);
             goalNode.print();
 
             Node initialState = new Node(null, goalNode, mapValidator.getState(), heuristicFunction);
