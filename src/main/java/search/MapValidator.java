@@ -46,7 +46,8 @@ public class MapValidator {
         setMapSize();
         setMapList();
         checkNumberSequence();
-        checkResolve(createGoalNode(state.length, new HashMap<>()));
+        int[][] goalNode = createGoalNode(state.length, new HashMap<>());
+        checkResolve(goalNode);
     }
 
 

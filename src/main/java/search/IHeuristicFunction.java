@@ -11,15 +11,18 @@ public class IHeuristicFunction {
         this.coordinates = coordinates;
     }
 
-    public int calculateHeuristic(Node node){
+    public int calculateHeuristic(Node node, Node goalNode){
 
 
         int h = 0;
         for (int i = 0; i < node.getState().length; i++) {
             for (int j = 0; j < node.getState()[i].length; j++) {
 
+                if (node.getState()[i][j] == 0) continue;
+
                 h += getManhattanDistance(node.getState()[i][j], i, j);
-                h += getLinearConflict(node, node.getState()[i][j], i, j);
+                h += verticalLinearConflict(node, goalNode, i, j);
+                h += horizontalLinearConflict(node, goalNode, i, j);
                 
             }
         }
@@ -31,56 +34,44 @@ public class IHeuristicFunction {
         if (value == 0)
             return 0;
         Coordinate coordinate = coordinates.get(value);
-        return (Math.abs(coordinate.getxPos() - j) + Math.abs(coordinate.getyPos() - i));
+        int dist = Math.abs(coordinate.getxPos() - j) + Math.abs(coordinate.getyPos() - i);
+        return (dist);
     }
 
-    private int getLinearConflict(Node node, int value, int iCopy, int jCopy) {
-
-        // TODO  сделать для улиточной ноды
+    private int verticalLinearConflict(Node node, Node goalNode, int y, int x) {
         int h = 0;
-        int i = iCopy;
-        int j = jCopy;
-
-        int startValueInLine = iCopy * node.getState().length + 1;
-        int endValueInLine = iCopy * node.getState().length + node.getState().length;
-
-        if (value <= endValueInLine && value >= startValueInLine){
-            for (; j < node.getState().length; j++) {
-
-                if (node.getState()[i][j] < value && node.getState()[i][j] <= endValueInLine && node.getState()[i][j] >= startValueInLine){
-                    h+=2;
-                }
-            }
+        for(int y2 = y + 1; y2 < node.getState().length; y2++)
+        {
+            if (checkSequence(node, goalNode, y, x, y2, x))
+                h += 2;
         }
-
-
-        // TODO column
-//        i = iCopy;
-//        j = jCopy;
-//
-//        for (; i <blocks.length; i++ ){
-//
-//            for (int ii = i; ii < blocks.length; ii++){
-//
-//            }
-//        }
-
-
-
-
         return h;
-
     }
 
-
-    private int getVerticalLinearConflict(Node node, int value, int i, int j){
-
-        //TODO для улиточной ноды
-
-
-
-        return 0;
+    private int horizontalLinearConflict(Node node, Node goalNode, int y, int x){
+        int h = 0;
+        for(int x2 = x + 1; x2 < node.getState()[y].length; x2++)
+        {
+            if (checkSequence(node, goalNode, y, x, y, x2))
+                h += 2;
+        }
+        return h;
     }
 
+    private boolean checkSequence(Node node, Node goalNode, int y, int x, int y2, int x2) {
+        Coordinate goalPos = coordinates.get(node.getState()[y][x]);
+        Coordinate goalPos2 = coordinates.get(node.getState()[y2][x2]);
+
+
+        int currDeltaY = y2 - y;
+        int currDeltaX = x2 - x;
+
+        if (currDeltaY == 0 && (y != goalPos.getyPos() || y2 != goalPos2.getyPos())) return false;
+        if (currDeltaX == 0 && (x != goalPos.getxPos() || y2 != goalPos2.getyPos())) return false;
+
+        int goalDeltaY = goalPos2.getyPos() - goalPos.getyPos();
+        int goalDeltaX = goalPos2.getxPos() - goalPos.getxPos();
+        return (goalDeltaY == currDeltaY || goalDeltaX == currDeltaX) && (currDeltaY * goalDeltaY < 0 || currDeltaX * goalDeltaX < 0);
+    }
 
 }

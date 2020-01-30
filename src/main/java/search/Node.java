@@ -16,11 +16,11 @@ public class Node implements Comparator<Node> {    // Чтобы узнать д
 
     }
 
-    public Node(Node parent, int[][] state,  IHeuristicFunction heuristicFunction) {
+    public Node(Node parent, Node  goalNode, int[][] state,  IHeuristicFunction heuristicFunction) {
         this.parent = parent;
         this.state = state;
         this.heuristicFunction = heuristicFunction;
-        h = this.heuristicFunction.calculateHeuristic(this);
+        h = this.heuristicFunction.calculateHeuristic(this, goalNode);
 //        h = calculateHeuristic();
         if (parent != null){
             g = parent.getG() + 1;
@@ -59,7 +59,7 @@ public class Node implements Comparator<Node> {    // Чтобы узнать д
         return f;
     }
 
-    PriorityQueue<Node> getSuccessors(){
+    PriorityQueue<Node> getSuccessors(Node goalNode){
 
         int zeroX = Integer.MAX_VALUE;
         int zeroY = Integer.MAX_VALUE;
@@ -77,19 +77,19 @@ public class Node implements Comparator<Node> {    // Чтобы узнать д
         PriorityQueue<Node> successors = new PriorityQueue<>(4, new NodeComparator());
         Node node;
 
-        node = getSuccessor(getNewState(), zeroX, zeroY, zeroX, zeroY + 1);
+        node = getSuccessor(getNewState(), goalNode, zeroX, zeroY, zeroX, zeroY + 1);
         if (node != null)
             successors.add(node);
 
-        node = getSuccessor(getNewState(), zeroX, zeroY, zeroX, zeroY - 1);
+        node = getSuccessor(getNewState(), goalNode, zeroX, zeroY, zeroX, zeroY - 1);
         if (node != null)
             successors.add(node);
 
-        node = getSuccessor(getNewState(), zeroX, zeroY, zeroX - 1, zeroY);
+        node = getSuccessor(getNewState(), goalNode, zeroX, zeroY, zeroX - 1, zeroY);
         if (node != null)
             successors.add(node);
 
-        node = getSuccessor(getNewState(), zeroX, zeroY, zeroX + 1, zeroY);
+        node = getSuccessor(getNewState(), goalNode, zeroX, zeroY, zeroX + 1, zeroY);
         if (node != null)
             successors.add(node);
 
@@ -112,13 +112,13 @@ public class Node implements Comparator<Node> {    // Чтобы узнать д
         return result;
     }
 
-    private Node getSuccessor(int[][] newState, int x1, int y1, int x2, int y2) {  //  в этом методе меняем два соседних поля
+    private Node getSuccessor(int[][] newState, Node goalNode, int x1, int y1, int x2, int y2) {  //  в этом методе меняем два соседних поля
 
         if (x2 > -1 && x2 < state.length && y2 > -1 && y2 < state.length) {
             int t = newState[x2][y2];
             newState[x2][y2] = newState[x1][y1];
             newState[x1][y1] = t;
-            Node node = new Node(this, newState, heuristicFunction);
+            Node node = new Node(this, goalNode, newState, heuristicFunction);
             node.setParent(this);
             return node;
         } else

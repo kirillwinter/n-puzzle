@@ -40,7 +40,7 @@ public class Main {
             IHeuristicFunction heuristicFunction = new IHeuristicFunction(coordinates);
             goalNode.print();
 
-            Node initialState = new Node(null, mapValidator.getState(), heuristicFunction);
+            Node initialState = new Node(null, goalNode, mapValidator.getState(), heuristicFunction);
 
             List<Node> path;
 
@@ -54,7 +54,7 @@ public class Main {
                     break;
                 case ASTAR:
                     Astar astar = new Astar(heuristicFunction, goalNode);
-                    int resAstar = astar.main(initialState, 4, true);
+                    int resAstar = astar.main(initialState, 500, true);
                     System.out.println("Astar, res=" + resAstar);
                     path = astar.getPath();
                     break;

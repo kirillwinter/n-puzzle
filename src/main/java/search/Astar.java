@@ -41,7 +41,7 @@ public class Astar {
                 return 1;
 
             int hCurrent = currentNode.getH();
-            PriorityQueue<Node> childrens = currentNode.getSuccessors();
+            PriorityQueue<Node> childrens = currentNode.getSuccessors(goalNode);
             Node children;
             while((children = childrens.poll()) != null)
             {
