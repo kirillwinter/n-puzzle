@@ -44,7 +44,7 @@ public class Ida {
 
         int minBound = Integer.MAX_VALUE;
 
-        PriorityQueue<Node> children = node.getSuccessors(goalNode);
+        PriorityQueue<Node> children = node.getSuccessors(); // TODO разобраться с передачей
         while (!children.isEmpty()){
             Node child = children.poll();
             if(!close.contains(child)){
@@ -67,7 +67,7 @@ public class Ida {
 
     public int main(Node root){
 
-        System.out.println("h = " + this.heuristicFunction.calculateHeuristic(root, goalNode));
+        System.out.println("h = " + this.heuristicFunction.calculateHeuristic(root));
 
         int currentBound = root.getH();
 

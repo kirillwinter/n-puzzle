@@ -9,12 +9,14 @@ import java.util.HashMap;
 public class IHeuristicFunction {
 
     private HashMap<Integer, Coordinate> coordinatesGoalNode;
+    private Node goalNode;
 
-    public IHeuristicFunction(HashMap<Integer, Coordinate> coordinatesGoalNode) {
+    public IHeuristicFunction(Node goalNode, HashMap<Integer, Coordinate> coordinatesGoalNode) {
+        this.goalNode = goalNode;
         this.coordinatesGoalNode = coordinatesGoalNode;
     }
 
-    public int calculateHeuristic(Node node, Node goalNode){
+    public int calculateHeuristic(Node node){
 
 
         int h = 0;

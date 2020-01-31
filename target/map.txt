@@ -48,7 +48,12 @@
 
 
  # This puzzle is solvable
- # 49 sec astar snake
+ # 49 sec astar snake - 1 thread
+ # 51 sec - 3 thread
+ # 61 sec - 5 thread minH: 0 openQueue=37723
+ # 73 sec - 7 thread minH: 0 openQueue=37792
+ # 43 sec - 1 thread без линейного конфликта
+ # 0 sec - ida
  4
   3 13  4  7
   2 15  0  1

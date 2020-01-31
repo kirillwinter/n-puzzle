@@ -8,8 +8,8 @@ import search.MapValidator;
 import search.Node;
 import search.algorithm.Astar;
 import search.algorithm.Ida;
+import search.algorithm.astar_thread_for_children.AstarAlgThreadForChildren;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -84,10 +84,10 @@ public class Main {
 //            goalNode.setState(GoalNodeCreator.createLastZeroGoalNode(mapValidator.getSize(), coordinatesGoalNode));
             goalNode.print();
             mapValidator.checkResolve(goalNode.getState());
-            IHeuristicFunction heuristicFunction = new IHeuristicFunction(coordinatesGoalNode);
+            IHeuristicFunction heuristicFunction = new IHeuristicFunction(goalNode, coordinatesGoalNode);
             goalNode.print();
 
-            Node initialState = new Node(null, goalNode, mapValidator.getState(), heuristicFunction);
+            Node initialState = new Node(null, mapValidator.getState(), mapValidator.getZeroXInitState(), mapValidator.getZeroYInitState(), heuristicFunction);
 
             List<Node> path;
 
@@ -100,7 +100,18 @@ public class Main {
                     path = ida.getPath();
                     break;
                 case ASTAR:
-                    Astar astar = new Astar(heuristicFunction, goalNode);
+
+//                    Astar astar = new Astar(heuristicFunction, goalNode);
+//                    int resAstar = astar.main(initialState, 500000, true);
+//                    System.out.println("Astar, res=" + resAstar);
+//                    path = astar.getPath();
+
+//                    AstarNew astar = new AstarNew(heuristicFunction, goalNode);
+//                    int resAstar = astar.main(initialState, 500000, true);
+//                    System.out.println("Astar, res=" + resAstar);
+//                    path = astar.getPath();
+
+                    AstarAlgThreadForChildren astar = new AstarAlgThreadForChildren(heuristicFunction, goalNode);
                     int resAstar = astar.main(initialState, 500000, true);
                     System.out.println("Astar, res=" + resAstar);
                     path = astar.getPath();
@@ -117,6 +128,7 @@ public class Main {
                node.print();
            }
             System.out.println("steps=" + path.size());
+           System.exit(0);
         }
     }
 }

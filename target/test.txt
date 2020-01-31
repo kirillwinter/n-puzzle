@@ -1,7 +1,7 @@
 # This puzzle is solvable
-# 49 sec astar snake
+# curNode 22 sec ida
 4
- 3 13  4  7
- 2 15  0  1
-12  6 14  8
-10  9 11  5
+ 6 11 15  4
+14  8  3 13
+12  2  5  0
+ 1 10  7  9

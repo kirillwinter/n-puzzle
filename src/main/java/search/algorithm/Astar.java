@@ -9,6 +9,13 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 public class Astar {
+
+    private IHeuristicFunction heuristicFunction;
+    private Node goalNode;
+    private Node currentNode;
+    private HashSet<Node> closeQueue = new HashSet<>();
+    private PriorityQueue<Node> openQueue;
+
     public Astar(IHeuristicFunction heuristicFunction, Node goalNode) {
         this.heuristicFunction = heuristicFunction;
         this.goalNode = goalNode;
@@ -44,7 +51,7 @@ public class Astar {
                 return 1;
 
             int hCurrent = currentNode.getH();
-            PriorityQueue<Node> childrens = currentNode.getSuccessors(goalNode);
+            PriorityQueue<Node> childrens = currentNode.getSuccessors(); // тут была ошибка (goalNode) уточнить у Дани
             Node children;
             while((children = childrens.poll()) != null)
             {
@@ -62,9 +69,5 @@ public class Astar {
         return 0;
     }
 
-    private IHeuristicFunction heuristicFunction;
-    private Node goalNode;
-    private Node currentNode;
-    private HashSet<Node> closeQueue = new HashSet<>();
-    private PriorityQueue<Node> openQueue;
+
 }

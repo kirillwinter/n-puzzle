@@ -1,5 +1,6 @@
 package search;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
@@ -8,11 +9,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+@Getter
 public class MapValidator {
     private List<String> linesList;
     private Integer size;
     private int[][] state;
     private List<Integer> sequence;
+    private int zeroXInitState;
+    private int zeroYInitState;
 
 
      public MapValidator() {
@@ -48,8 +52,16 @@ public class MapValidator {
         setMapSize();
         setMapList();
         checkNumberSequence();
+        setZeroPos();
     }
 
+    // TODO доработать методы check resolve
+    // TODO привести к единообразию координаты нуля
+    private void setZeroPos() {
+         int[] pos = getZeroPos(this.state);
+         zeroXInitState = pos[0];
+         zeroYInitState = pos[1];
+    }
 
 
     private void delComment(){
@@ -223,13 +235,6 @@ public class MapValidator {
         return sequence;
     }
 
-    public int[][] getState() {
-        return state;
-    }
-
-    public Integer getSize() {
-        return size;
-    }
 
 
 

@@ -4,29 +4,33 @@ import lombok.Getter;
 import lombok.Setter;
 import search.algorithm.IHeuristicFunction;
 
+import java.io.Serializable;
 import java.util.*;
 
 @Getter
 @Setter
-public class Node implements Comparator<Node> {    // Чтобы узнать длину пути, нам нужно помнить предидущие позиции (и не только поэтому)
+public class Node implements Comparator<Node>, Serializable {    // Чтобы узнать длину пути, нам нужно помнить предидущие позиции (и не только поэтому)
 
     private Node parent;  // ссылка на предыдущий
     private int[][] state;  // сама позиция
     private int g = 0;
     private int h = 0;
     private int f = 0;
+    private int zeroX;
+    private int zeroY;
     private IHeuristicFunction heuristicFunction;
 
 
     public Node() {
-
     }
 
-    public Node(Node parent, Node  goalNode, int[][] state,  IHeuristicFunction heuristicFunction) {
+    public Node(Node parent, int[][] state, int zeroX, int zeroY,  IHeuristicFunction heuristicFunction) {
         this.parent = parent;
         this.state = state;
+        this.zeroX = zeroX;
+        this.zeroY = zeroY;
         this.heuristicFunction = heuristicFunction;
-        h = this.heuristicFunction.calculateHeuristic(this, goalNode);
+        h = this.heuristicFunction.calculateHeuristic(this);
 //        h = calculateHeuristic();
         if (parent != null){
             g = parent.getG() + 1;
@@ -39,41 +43,44 @@ public class Node implements Comparator<Node> {    // Чтобы узнать д
         return f;
     }
 
-    public PriorityQueue<Node> getSuccessors(Node goalNode){
-
-        int zeroX = Integer.MAX_VALUE;
-        int zeroY = Integer.MAX_VALUE;
-
-        for (int i = 0; i < state.length; i++) {
-            for (int j = 0; j < state[i].length; j++) {
-                if (state[i][j] == 0) {
-                    zeroX = i;
-                    zeroY = j;
-                    break;
-                }
-            }
-        }
+    public PriorityQueue<Node> getSuccessors(){
 
         PriorityQueue<Node> successors = new PriorityQueue<>(4, new NodeComparator());
         Node node;
 
-        node = getSuccessor(getNewState(), goalNode, zeroX, zeroY, zeroX, zeroY + 1);
+        node = getSuccessor(getNewState(),  zeroX, zeroY + 1);
         if (node != null)
             successors.add(node);
 
-        node = getSuccessor(getNewState(), goalNode, zeroX, zeroY, zeroX, zeroY - 1);
+        node = getSuccessor(getNewState(),   zeroX, zeroY - 1);
         if (node != null)
             successors.add(node);
 
-        node = getSuccessor(getNewState(), goalNode, zeroX, zeroY, zeroX - 1, zeroY);
+        node = getSuccessor(getNewState(), zeroX - 1, zeroY);
         if (node != null)
             successors.add(node);
 
-        node = getSuccessor(getNewState(), goalNode, zeroX, zeroY, zeroX + 1, zeroY);
+        node = getSuccessor(getNewState(),  zeroX + 1, zeroY);
         if (node != null)
             successors.add(node);
 
         return successors;
+    }
+
+
+
+    private Node getSuccessor(int[][] newState,  int newZeroX, int newZeroY) {  //  в этом методе меняем ноль и соседнее число
+
+        if (newZeroX > -1 && newZeroX < state.length && newZeroY > -1 && newZeroY < state.length) {
+            int t = newState[newZeroY][newZeroX];
+            newState[newZeroY][newZeroX] = newState[zeroY][zeroX];
+            newState[zeroY][zeroX] = t;
+            Node node = new Node(this,  newState, newZeroX, newZeroY, heuristicFunction);
+//            node.setParent(this);
+            return node;
+        } else
+            return null;
+
     }
 
     private int[][] getNewState() { //  опять же, для неизменяемости
@@ -91,33 +98,11 @@ public class Node implements Comparator<Node> {    // Чтобы узнать д
         }
         return result;
     }
-
-    private Node getSuccessor(int[][] newState, Node goalNode, int x1, int y1, int x2, int y2) {  //  в этом методе меняем два соседних поля
-
-        if (x2 > -1 && x2 < state.length && y2 > -1 && y2 < state.length) {
-            int t = newState[x2][y2];
-            newState[x2][y2] = newState[x1][y1];
-            newState[x1][y1] = t;
-            Node node = new Node(this, goalNode, newState, heuristicFunction);
-            node.setParent(this);
-            return node;
-        } else
-            return null;
-
-    }
-
-
-
-    int distFromParent() {
-        return 1;
-    }
-
-
     public void print(){
 
         for (int i = 0; i < state.length; i++) {
             for (int j = 0; j < state[i].length; j++) {
-                System.out.print(state[i][j] + " ");
+                System.out.print(state[i][j] + "\t");
             }
             System.out.println();
         }
