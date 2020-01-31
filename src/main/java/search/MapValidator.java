@@ -184,8 +184,10 @@ public class MapValidator {
             currStateOffsets += stateSize * stateSize - (currZeroPos[0] + currZeroPos[1] * stateSize);
             goalStateOffsets += stateSize * stateSize - (goalZeroPos[0] + goalZeroPos[1] * stateSize);
         }
-        if (currStateOffsets % 2 != goalStateOffsets % 2)
-            throw new PuzzleIsUnsolvableException();
+        if (currStateOffsets % 2 != goalStateOffsets % 2){
+            System.err.println("ERROR: Puzzle is Unsolvable");
+            System.exit(1);
+        }
     }
 
     int[] getZeroPos(int[][] state) {

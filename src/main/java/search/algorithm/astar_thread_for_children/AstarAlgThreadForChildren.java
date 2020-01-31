@@ -83,18 +83,18 @@ public class AstarAlgThreadForChildren {
 
 //            astarChildrenAddThread.createChildren(currentNode, closeQueue, openQueue, hCurrent);
 
-            PriorityQueue<Node> childrens = currentNode.getSuccessors();
-            Node children;
-            while((children = childrens.poll()) != null)
-            {
-                int hChildren = children.getH();
-                if (!closeQueue.contains(children)
-                        && !openQueue.contains(children)
-                        && hChildren <= hCurrent + 1
-                        && openQueue.size() <= maxQueue
-                )
-                    openQueue.add(children);
-            }
+//            PriorityQueue<Node> childrens = currentNode.getSuccessors();
+//            Node children;
+//            while((children = childrens.poll()) != null)
+//            {
+//                int hChildren = children.getH();
+//                if (!closeQueue.contains(children)
+//                        && !openQueue.contains(children)
+//                        && hChildren <= hCurrent + 1
+//                        && openQueue.size() <= maxQueue
+//                )
+//                    openQueue.add(children);
+//            }
         }
 //        System.out.println("A Star not found");
 //        System.exit(1);

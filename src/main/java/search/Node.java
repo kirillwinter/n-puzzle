@@ -30,17 +30,18 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
         this.zeroX = zeroX;
         this.zeroY = zeroY;
         this.heuristicFunction = heuristicFunction;
-        h = this.heuristicFunction.calculateHeuristic(this);
+        if (parent != null && parent.getG() != 0)
+            h = this.heuristicFunction.calculateHeuristic(this);
 //        h = calculateHeuristic();
         if (parent != null){
             g = parent.getG() + 1;
         }
+        f = h + g;
     }
 
-
-    public int getF() {
-        f = h + g;
-        return f;
+    public Node(Node parent, int[][] state) {
+        this.parent = parent;
+        this.state = state;
     }
 
     public PriorityQueue<Node> getSuccessors(){
@@ -92,9 +93,7 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
         final int[][] result = new int[state.length][];
         for (int i = 0; i < state.length; i++) {
             result[i] = new int[state[i].length];
-            for (int j = 0; j < state[i].length; j++) {
-                result[i][j] = state[i][j];
-            }
+            System.arraycopy(state[i], 0, result[i], 0, state[i].length);
         }
         return result;
     }
@@ -109,13 +108,6 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
         System.out.println();
     }
 
-    public void setParent(Node parent) {
-        this.parent = parent;
-    }
-
-    public int[][] getState() {
-        return state;
-    }
 
     @Override
     public int compare(Node a, Node b) {

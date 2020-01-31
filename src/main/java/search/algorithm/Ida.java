@@ -22,49 +22,6 @@ public class Ida {
         this.goalNode = goalNode;
     }
 
-    public int search(Node node, int bound){
-        countVisited++;
-
-        close.add(node);
-
-        if (node.getF() > bound)
-            return node.getF();
-
-        // isGoal
-        if (node.equals(goalNode)){
-            System.out.println(node.equals(goalNode));
-
-            System.out.println("FOUND");
-            System.out.println("countVisited = " + countVisited);
-            System.out.println("close = " + close.size());
-            System.out.println("countNotPut = " + countNotPut);
-            endPathNode = node;
-            return FOUND;
-        }
-
-        int minBound = Integer.MAX_VALUE;
-
-        PriorityQueue<Node> children = node.getSuccessors(); // TODO разобраться с передачей
-        while (!children.isEmpty()){
-            Node child = children.poll();
-            if(!close.contains(child)){
-                int currentBound = search(child, bound);
-
-                if (currentBound == FOUND){
-                    return FOUND;
-                }
-
-                if (currentBound < minBound)
-                    minBound = currentBound;
-                close.remove(child);
-            } else
-                countNotPut++;
-
-        }
-        return minBound;
-
-    }
-
     public int main(Node root){
 
         System.out.println("h = " + this.heuristicFunction.calculateHeuristic(root));
@@ -91,6 +48,50 @@ public class Ida {
             currentBound = smallestBound;
         }
     }
+
+    public int search(Node node, int bound){
+        countVisited++;
+
+        close.add(node);
+
+        if (node.getF() > bound)
+            return node.getF();
+
+        // isGoal
+        if (node.equals(goalNode)){
+            System.out.println(node.equals(goalNode));
+
+            System.out.println("FOUND");
+            System.out.println("countVisited = " + countVisited);
+            System.out.println("close = " + close.size());
+            System.out.println("countNotPut = " + countNotPut);
+            endPathNode = node;
+            return FOUND;
+        }
+
+        int minBound = Integer.MAX_VALUE;
+
+        PriorityQueue<Node> children = node.getSuccessors();
+        while (!children.isEmpty()){
+            Node child = children.poll();
+            if(!close.contains(child)){
+                int currentBound = search(child, bound);
+
+                if (currentBound == FOUND){
+                    return FOUND;
+                }
+
+                if (currentBound < minBound)
+                    minBound = currentBound;
+                close.remove(child);
+            } else
+                countNotPut++;
+
+        }
+        return minBound;
+    }
+
+
 
     public List<Node> getPath() {
         ArrayList<Node> path = new ArrayList<>();

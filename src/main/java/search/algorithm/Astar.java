@@ -15,10 +15,12 @@ public class Astar {
     private Node currentNode;
     private HashSet<Node> closeQueue = new HashSet<>();
     private PriorityQueue<Node> openQueue;
+    private boolean isGreedy;
 
-    public Astar(IHeuristicFunction heuristicFunction, Node goalNode) {
+    public Astar(IHeuristicFunction heuristicFunction, Node goalNode, boolean isGreedy) {
         this.heuristicFunction = heuristicFunction;
         this.goalNode = goalNode;
+        this.isGreedy = isGreedy;
     }
 
     public List<Node> getPath() {
@@ -51,7 +53,7 @@ public class Astar {
                 return 1;
 
             int hCurrent = currentNode.getH();
-            PriorityQueue<Node> childrens = currentNode.getSuccessors(); // тут была ошибка (goalNode) уточнить у Дани
+            PriorityQueue<Node> childrens = currentNode.getSuccessors();
             Node children;
             while((children = childrens.poll()) != null)
             {
@@ -61,6 +63,8 @@ public class Astar {
                     && hChildren <= hCurrent + 1
                     && openQueue.size() <= maxQueue
                     )
+                    if (isGreedy)
+                        children.setG(0);
                     openQueue.add(children);
             }
         }

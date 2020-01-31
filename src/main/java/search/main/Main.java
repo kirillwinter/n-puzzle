@@ -43,6 +43,8 @@ public class Main {
                     algorithm = AlgorithmEnum.ASTAR;
                 } else if (arg.compareToIgnoreCase("-ida") == 0){
                     algorithm = AlgorithmEnum.IDA;
+                } else if (arg.compareToIgnoreCase("-greedy") == 0){
+                    algorithm = AlgorithmEnum.GREEDY;
                 } else if (arg.compareToIgnoreCase("-snake") == 0){
                     goalStateArg = GoalStateEnum.SNAKE;
                 } else if (arg.compareToIgnoreCase("-first_zero") == 0){
@@ -85,6 +87,10 @@ public class Main {
             goalNode.print();
             mapValidator.checkResolve(goalNode.getState());
             IHeuristicFunction heuristicFunction = new IHeuristicFunction(goalNode, coordinatesGoalNode);
+//            goalNode.getSuccessors();
+//
+//            goalNode.setHeuristicFunction(heuristicFunction);
+//            heuristicFunction.getLastMoveState();
             goalNode.print();
 
             Node initialState = new Node(null, mapValidator.getState(), mapValidator.getZeroXInitState(), mapValidator.getZeroYInitState(), heuristicFunction);
@@ -101,20 +107,26 @@ public class Main {
                     break;
                 case ASTAR:
 
-//                    Astar astar = new Astar(heuristicFunction, goalNode);
-//                    int resAstar = astar.main(initialState, 500000, true);
-//                    System.out.println("Astar, res=" + resAstar);
-//                    path = astar.getPath();
+                    Astar astar = new Astar(heuristicFunction, goalNode, false);
+                    int resAstar = astar.main(initialState, 500000, true);
+                    System.out.println("Astar, res=" + resAstar);
+                    path = astar.getPath();
 
 //                    AstarNew astar = new AstarNew(heuristicFunction, goalNode);
 //                    int resAstar = astar.main(initialState, 500000, true);
 //                    System.out.println("Astar, res=" + resAstar);
 //                    path = astar.getPath();
 
-                    AstarAlgThreadForChildren astar = new AstarAlgThreadForChildren(heuristicFunction, goalNode);
-                    int resAstar = astar.main(initialState, 500000, true);
-                    System.out.println("Astar, res=" + resAstar);
-                    path = astar.getPath();
+//                    AstarAlgThreadForChildren astar = new AstarAlgThreadForChildren(heuristicFunction, goalNode);
+//                    int resAstar = astar.main(initialState, 500000, true);
+//                    System.out.println("Astar, res=" + resAstar);
+//                    path = astar.getPath();
+                    break;
+                case GREEDY:
+                    Astar greedy = new Astar(heuristicFunction, goalNode, true);
+                    int resGreedy= greedy.main(initialState, 500000, true);
+                    System.out.println("Astar, res=" + resGreedy);
+                    path = greedy.getPath();
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + algorithm);
@@ -124,7 +136,7 @@ public class Main {
            System.out.println("time complexity = " + (System.currentTimeMillis() - start)/1000 + "sec");
            int count = 0;
            for (Node node : path ) {
-               System.out.println("h=" + node.getH());
+               System.out.println("h=" + node.getH() +  " g=" + node.getG());
                node.print();
            }
             System.out.println("steps=" + path.size());
