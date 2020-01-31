@@ -18,6 +18,7 @@ public class IHeuristicFunction {
     public IHeuristicFunction(Node goalNode, HashMap<Integer, Coordinate> coordinatesGoalNode) {
         this.goalNode = goalNode;
         this.coordinatesGoalNode = coordinatesGoalNode;
+        getLastMoveState();
     }
 
     public int calculateHeuristic(Node node){
@@ -34,11 +35,11 @@ public class IHeuristicFunction {
                 
             }
         }
-        if (!lastMoveList.contains(node)){
-            h +=2;
-        } else {
-            System.out.println("find last");
-        }
+//        if (!lastMoveList.contains(node)){
+//            h +=2;
+//        } else {
+//            System.out.println("find last");
+//        }
 
 
 
@@ -94,23 +95,25 @@ public class IHeuristicFunction {
     private void getLastMoveState(){
         lastMoveList = new ArrayList<>();
 
+
+
         Node node;
 
-        node = getSuccessor(getNewState(),  zeroX, zeroY + 1);
+        node = getSuccessor(getNewState(),  goalNode.getZeroX(), goalNode.getZeroY() + 1);
         if (node != null)
-            successors.add(node);
+            lastMoveList.add(node);
 
-        node = getSuccessor(getNewState(),   zeroX, zeroY - 1);
+        node = getSuccessor(getNewState(),   goalNode.getZeroX(), goalNode.getZeroY() - 1);
         if (node != null)
-            successors.add(node);
+            lastMoveList.add(node);
 
-        node = getSuccessor(getNewState(), zeroX - 1, zeroY);
+        node = getSuccessor(getNewState(), goalNode.getZeroX() - 1, goalNode.getZeroY());
         if (node != null)
-            successors.add(node);
+            lastMoveList.add(node);
 
-        node = getSuccessor(getNewState(),  zeroX + 1, zeroY);
+        node = getSuccessor(getNewState(),  goalNode.getZeroX() + 1, goalNode.getZeroY());
         if (node != null)
-            successors.add(node);
+            lastMoveList.add(node);
     }
 
     private Node getSuccessor(int[][] newState,  int newZeroX, int newZeroY) {  //  в этом методе меняем ноль и соседнее число
@@ -118,9 +121,9 @@ public class IHeuristicFunction {
         int[][] state = goalNode.getState();
         if (newZeroX > -1 && newZeroX < state.length && newZeroY > -1 && newZeroY < state.length) {
             int t = newState[newZeroY][newZeroX];
-            newState[newZeroY][newZeroX] = newState[zeroY][zeroX];
-            newState[zeroY][zeroX] = t;
-            Node node = new Node(this,  newState);
+            newState[newZeroY][newZeroX] = newState[goalNode.getZeroY()][goalNode.getZeroX()];
+            newState[goalNode.getZeroY()][goalNode.getZeroX()] = t;
+            Node node = new Node(goalNode,  newState);
 //            node.setParent(this);
             return node;
         } else
@@ -130,6 +133,7 @@ public class IHeuristicFunction {
 
     private int[][] getNewState() { //  опять же, для неизменяемости
 
+        int[][] state = goalNode.getState();
         if (state == null) {
             return null;
         }
