@@ -66,6 +66,7 @@ public class Astar {
                     if (isGreedy)
                         children.setG(0);
                     openQueue.add(children);
+                    //TODO ???
             }
         }
         System.out.println("A Star not found");

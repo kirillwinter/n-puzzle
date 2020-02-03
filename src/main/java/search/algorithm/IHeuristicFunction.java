@@ -30,6 +30,7 @@ public class IHeuristicFunction {
                 if (node.getState()[i][j] == 0) continue;
 
                 h += getManhattanDistance(node.getState()[i][j], i, j);
+                //TODO закоментированно?
 //                h += verticalLinearConflict(node, i, j);
 //                h += horizontalLinearConflict(node, i, j);
                 

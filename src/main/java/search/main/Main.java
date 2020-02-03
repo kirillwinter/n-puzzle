@@ -23,6 +23,8 @@ public class Main {
     public static void main(String[] args) {
 
         // TODO  теряются рещения при  ASTAR
+        // TODO 3 эвристики + выбор параметром
+        // TODO инициализация maxQueue для А*
 
         // установка дефолтных значений
         AlgorithmEnum algorithm;
