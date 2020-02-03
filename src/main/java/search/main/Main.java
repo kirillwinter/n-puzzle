@@ -8,16 +8,10 @@ import search.MapValidator;
 import search.Node;
 import search.algorithm.Astar;
 import search.algorithm.Ida;
-import search.algorithm.astar_thread_for_children.AstarAlgThreadForChildren;
 
 import java.util.HashMap;
 import java.util.List;
 
-
-
-// TODO стоит ли выбрасывать исключения?
-// TODO жадный поиск
-// TODO uniform-cost search
 public class Main {
 
     public static void main(String[] args) {
@@ -26,9 +20,11 @@ public class Main {
 
         // установка дефолтных значений
         AlgorithmEnum algorithm;
-        algorithm = AlgorithmEnum.IDA;
+        algorithm = AlgorithmEnum.ASTAR;
         GoalStateEnum goalStateArg;
-        goalStateArg = GoalStateEnum.SNAKE;;
+        goalStateArg = GoalStateEnum.SNAKE;
+        int maxQueue = 100000;
+        boolean debug = false;
 
         for (int i = 0; i < args.length ; i++) {
             System.out.println(i + " " + args[i]);
@@ -45,19 +41,34 @@ public class Main {
                     algorithm = AlgorithmEnum.IDA;
                 } else if (arg.compareToIgnoreCase("-greedy") == 0){
                     algorithm = AlgorithmEnum.GREEDY;
-                } else if (arg.compareToIgnoreCase("-snake") == 0){
+                }else if (arg.compareToIgnoreCase("-uniform_cost") == 0) {
+                    algorithm = AlgorithmEnum.UNIFORM_COST;
+                }else if (arg.compareToIgnoreCase("-snake") == 0){
                     goalStateArg = GoalStateEnum.SNAKE;
                 } else if (arg.compareToIgnoreCase("-first_zero") == 0){
                     goalStateArg = GoalStateEnum.FIRST_ZERO;
                 } else if (arg.compareToIgnoreCase("-last_zero") == 0){
                     goalStateArg = GoalStateEnum.LAST_ZERO;
-                } else {
+                } else if (arg.contains("-max_queue=")){
+                    String[] maxQueueArgs =  arg.split("=");
+                    if (maxQueueArgs.length == 2){
+                        try {
+                            maxQueue = Integer.parseInt(maxQueueArgs[1]);
+                        } catch (Exception e){
+                            System.err.println("Invalid arg: " + arg);
+                            System.exit(1);
+                        }
+                    } else {
+                        System.err.println("Invalid arg: " + arg);
+                        System.exit(1);
+                    }
+                }else if (arg.compareToIgnoreCase("-debug") == 0){
+                    debug = true;
+                }  else {
                     System.err.println("Invalid arg: " + arg);
                     System.exit(1);
                 }
             }
-
-
 
 
             long start = System.currentTimeMillis();
@@ -67,80 +78,54 @@ public class Main {
             mapValidator.read(fileName);
             System.out.println("start");
 
-            Node goalNode = new Node();
+            Node goalNode;
 
             HashMap<Integer, Coordinate> coordinatesGoalNode = new HashMap<>();
 
             switch (goalStateArg){
-                case SNAKE:
-                    goalNode.setState(GoalNodeCreator.createSnakeGoalNode(mapValidator.getSize(), coordinatesGoalNode));
-                    break;
                 case FIRST_ZERO:
-                    goalNode.setState(GoalNodeCreator.createFirstZeroGoalNode(mapValidator.getSize(), coordinatesGoalNode));
+                    goalNode = GoalNodeCreator.createFirstZeroGoalNode(mapValidator.getSize(), coordinatesGoalNode);
                     break;
                 case LAST_ZERO:
-                    goalNode.setState(GoalNodeCreator.createLastZeroGoalNode(mapValidator.getSize(), coordinatesGoalNode));
+                    goalNode = GoalNodeCreator.createLastZeroGoalNode(mapValidator.getSize(), coordinatesGoalNode);
+                    break;
+                default:
+                    goalNode = GoalNodeCreator.createSnakeGoalNode(mapValidator.getSize(), coordinatesGoalNode);
                     break;
             }
 
-//            goalNode.setState(GoalNodeCreator.createLastZeroGoalNode(mapValidator.getSize(), coordinatesGoalNode));
-            goalNode.print();
             mapValidator.checkResolve(goalNode.getState());
             IHeuristicFunction heuristicFunction = new IHeuristicFunction(goalNode, coordinatesGoalNode);
-//            goalNode.getSuccessors();
-//
-//            goalNode.setHeuristicFunction(heuristicFunction);
-//            heuristicFunction.getLastMoveState();
             goalNode.print();
 
-            Node initialState = new Node(null, mapValidator.getState(), mapValidator.getZeroXInitState(), mapValidator.getZeroYInitState(), heuristicFunction);
+            Node initialState = new Node(null, mapValidator.getState(), mapValidator.getZeroXInitState(),
+                    mapValidator.getZeroYInitState(), heuristicFunction, algorithm);
 
             List<Node> path;
 
-            switch (algorithm)
-            {
-                case IDA:
-                    Ida ida = new Ida(heuristicFunction, goalNode);
-                    int res = ida.main(initialState);
-                    System.out.println("Ida, res = " + res);
-                    path = ida.getPath();
-                    break;
-                case ASTAR:
-
-                    Astar astar = new Astar(heuristicFunction, goalNode, false);
-                    int resAstar = astar.main(initialState, 500000, true);
-                    System.out.println("Astar, res=" + resAstar);
-                    path = astar.getPath();
-
-//                    AstarNew astar = new AstarNew(heuristicFunction, goalNode);
-//                    int resAstar = astar.main(initialState, 500000, true);
-//                    System.out.println("Astar, res=" + resAstar);
-//                    path = astar.getPath();
-
-//                    AstarAlgThreadForChildren astar = new AstarAlgThreadForChildren(heuristicFunction, goalNode);
-//                    int resAstar = astar.main(initialState, 500000, true);
-//                    System.out.println("Astar, res=" + resAstar);
-//                    path = astar.getPath();
-                    break;
-                case GREEDY:
-                    Astar greedy = new Astar(heuristicFunction, goalNode, true);
-                    int resGreedy= greedy.main(initialState, 500000, true);
-                    System.out.println("Astar, res=" + resGreedy);
-                    path = greedy.getPath();
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + algorithm);
+            if (algorithm == AlgorithmEnum.IDA) {
+                Ida ida = new Ida(goalNode, debug);
+                int res = ida.main(initialState);
+                System.out.println("Ida, res = " + res);
+                path = ida.getPath();
+            } else {
+                Astar astar = new Astar(goalNode, debug);
+                int resAstar = astar.main(initialState, maxQueue);
+                System.out.println("Astar, res=" + resAstar);
+                path = astar.getPath();
             }
 
-
            System.out.println("time complexity = " + (System.currentTimeMillis() - start)/1000 + "sec");
-           int count = 0;
            for (Node node : path ) {
                System.out.println("h=" + node.getH() +  " g=" + node.getG());
                node.print();
            }
-            System.out.println("steps=" + path.size());
+           System.out.println("steps=" + path.size());
            System.exit(0);
+        } else {
+            System.err.println("Where filename????");
+            System.exit(1);
         }
     }
+
 }

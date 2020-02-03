@@ -3,6 +3,7 @@ package search;
 import lombok.Getter;
 import lombok.Setter;
 import search.algorithm.IHeuristicFunction;
+import search.main.AlgorithmEnum;
 
 import java.io.Serializable;
 import java.util.*;
@@ -18,30 +19,43 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
     private int f = 0;
     private int zeroX;
     private int zeroY;
+    private AlgorithmEnum algorithm;
     private IHeuristicFunction heuristicFunction;
 
 
     public Node() {
     }
 
-    public Node(Node parent, int[][] state, int zeroX, int zeroY,  IHeuristicFunction heuristicFunction) {
+    public Node(Node parent, int[][] state, int zeroX, int zeroY, IHeuristicFunction heuristicFunction, AlgorithmEnum algorithm) {
         this.parent = parent;
         this.state = state;
         this.zeroX = zeroX;
         this.zeroY = zeroY;
         this.heuristicFunction = heuristicFunction;
-        if (parent != null && parent.getG() != 0)
-            h = this.heuristicFunction.calculateHeuristic(this);
-//        h = calculateHeuristic();
-        if (parent != null){
-            g = parent.getG() + 1;
+        this.algorithm = algorithm;
+        switch (algorithm) {
+            case GREEDY:
+                g = 0;
+                h = this.heuristicFunction.calculateHeuristic(this);
+                break;
+            case UNIFORM_COST:
+                h = 0;
+                if (parent != null)
+                    g = parent.getG() + 1;
+                break;
+            default:
+                h = this.heuristicFunction.calculateHeuristic(this);
+                if (parent != null)
+                    g = parent.getG() + 1;
         }
         f = h + g;
     }
 
-    public Node(Node parent, int[][] state) {
+    public Node(Node parent, int[][] state, int zeroX, int zeroY) {
         this.parent = parent;
         this.state = state;
+        this.zeroX = zeroX;
+        this.zeroY = zeroY;
     }
 
     public PriorityQueue<Node> getSuccessors(){
@@ -70,13 +84,13 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
 
 
 
-    private Node getSuccessor(int[][] newState,  int newZeroX, int newZeroY) {  //  в этом методе меняем ноль и соседнее число
+    private Node getSuccessor(int[][] newState,  int newZeroX, int newZeroY) {
 
         if (newZeroX > -1 && newZeroX < state.length && newZeroY > -1 && newZeroY < state.length) {
             int t = newState[newZeroY][newZeroX];
             newState[newZeroY][newZeroX] = newState[zeroY][zeroX];
             newState[zeroY][zeroX] = t;
-            Node node = new Node(this,  newState, newZeroX, newZeroY, heuristicFunction);
+            Node node = new Node(this,  newState, newZeroX, newZeroY, heuristicFunction, algorithm);
 //            node.setParent(this);
             return node;
         } else
@@ -84,7 +98,7 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
 
     }
 
-    private int[][] getNewState() { //  опять же, для неизменяемости
+    private int[][] getNewState() {
 
         if (state == null) {
             return null;
@@ -128,7 +142,9 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
     }
 
     @Override
+    // TODO может нужно оптимизировать hashCode
     public int hashCode() {
+//        return zeroY * 100 + zeroX;
         return Arrays.deepHashCode(state);
     }
 

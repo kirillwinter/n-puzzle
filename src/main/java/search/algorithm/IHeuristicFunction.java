@@ -4,21 +4,20 @@ package search.algorithm;
 import search.Coordinate;
 import search.Node;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class IHeuristicFunction {
 
     private HashMap<Integer, Coordinate> coordinatesGoalNode;
     private Node goalNode;
-    List<Node> lastMoveList;
+    private HashSet<Node> lastMoveList;
+    private boolean flag;
 
     public IHeuristicFunction(Node goalNode, HashMap<Integer, Coordinate> coordinatesGoalNode) {
         this.goalNode = goalNode;
         this.coordinatesGoalNode = coordinatesGoalNode;
         getLastMoveState();
+        flag = true;
     }
 
     public int calculateHeuristic(Node node){
@@ -29,21 +28,27 @@ public class IHeuristicFunction {
 
                 if (node.getState()[i][j] == 0) continue;
 
-                h += getManhattanDistance(node.getState()[i][j], i, j);
-//                h += verticalLinearConflict(node, i, j);
-//                h += horizontalLinearConflict(node, i, j);
-                
+
+                if (flag)
+                    h += getManhattanDistance(node.getState()[i][j], i, j);
+                h += verticalLinearConflict(node, i, j);
+                h += horizontalLinearConflict(node, i, j);
+////
             }
         }
-//        if (!lastMoveList.contains(node)){
-//            h +=2;
-//        } else {
-//            System.out.println("find last");
-//        }
-
-
-
+        // TODO оптимизировать
+        h += lastMove(node);
         return h;
+    }
+
+    private int lastMove(Node node){
+        if (!lastMoveList.contains(node)){
+            return 2;
+        } else {
+            System.out.println("find last");
+        }
+        return 0;
+
     }
 
     private int getManhattanDistance(int value, int i, int j){
@@ -51,7 +56,7 @@ public class IHeuristicFunction {
         if (value == 0)
             return 0;
         Coordinate coordinate = coordinatesGoalNode.get(value);
-        int dist = Math.abs(coordinate.getxPos() - j) + Math.abs(coordinate.getyPos() - i);
+        int dist = Math.abs(coordinate.getXPos() - j) + Math.abs(coordinate.getYPos() - i);
         return (dist);
     }
 
@@ -83,19 +88,18 @@ public class IHeuristicFunction {
         int currDeltaY = y2 - y;
         int currDeltaX = x2 - x;
 
-        if (currDeltaY == 0 && (y != goalPos.getyPos() || y2 != goalPos2.getyPos())) return false;
-        if (currDeltaX == 0 && (x != goalPos.getxPos() || y2 != goalPos2.getyPos())) return false;
+        if (currDeltaY == 0 && (y != goalPos.getYPos() || y2 != goalPos2.getYPos())) return false;
+        if (currDeltaX == 0 && (x != goalPos.getXPos() || y2 != goalPos2.getYPos())) return false;
 
-        int goalDeltaY = goalPos2.getyPos() - goalPos.getyPos();
-        int goalDeltaX = goalPos2.getxPos() - goalPos.getxPos();
+        int goalDeltaY = goalPos2.getYPos() - goalPos.getYPos();
+        int goalDeltaX = goalPos2.getXPos() - goalPos.getXPos();
         return (goalDeltaY == currDeltaY || goalDeltaX == currDeltaX) && (currDeltaY * goalDeltaY < 0 || currDeltaX * goalDeltaX < 0);
     }
 
 
+
     private void getLastMoveState(){
-        lastMoveList = new ArrayList<>();
-
-
+        lastMoveList = new HashSet<>();
 
         Node node;
 
@@ -123,15 +127,14 @@ public class IHeuristicFunction {
             int t = newState[newZeroY][newZeroX];
             newState[newZeroY][newZeroX] = newState[goalNode.getZeroY()][goalNode.getZeroX()];
             newState[goalNode.getZeroY()][goalNode.getZeroX()] = t;
-            Node node = new Node(goalNode,  newState);
-//            node.setParent(this);
-            return node;
+            return new Node(goalNode,  newState, newZeroX, newZeroY);
         } else
             return null;
 
     }
 
-    private int[][] getNewState() { //  опять же, для неизменяемости
+
+    private int[][] getNewState() {
 
         int[][] state = goalNode.getState();
         if (state == null) {

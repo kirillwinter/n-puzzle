@@ -111,7 +111,8 @@ public class MapValidator {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (sequence.contains(state[i][j]) || state[i][j] > size * size - 1 || state[i][j] < 0){
-                    throw new IllegalArgumentException(String.valueOf(state[i][j]));
+                    System.err.println("ERROR:  Illegal argument " + state[i][j]);
+                    System.exit(1);
                 }
                 sequence.add(state[i][j]);
             }
@@ -131,14 +132,20 @@ public class MapValidator {
 //        System.out.println("invGoal = " + invGoal);
 //        System.out.println("invCur = " + invCur);
 //
+//        if (invGoal % 2 != invCur % 2){
+//            System.err.println("ERROR: Puzzle is Unsolvable");
+//            System.exit(1);
+//        }
+//
+//
 ////        if (inv % 2 != 0){
 ////            System.out.println("inv = " + inv);
-////            throw new PuzzleIsUnsolvableException();
+////            System.exit(1);
 ////        }
 ////
 ////        System.out.println("inv = " + inv);
 //    }
-//
+
 //    private int calculateInv(int[][] state){
 //
 //        List<Integer> sequence = new ArrayList<>();
@@ -173,8 +180,6 @@ public class MapValidator {
 
         int currStateOffsets = numberOfOffsets(state);
         int goalStateOffsets = numberOfOffsets(goalState);
-        System.out.println("state Offsets = " + currStateOffsets);
-        System.out.println("goal Offsets = " + goalStateOffsets);
 
         if (state.length % 2 == 0)
         {
@@ -184,6 +189,8 @@ public class MapValidator {
             currStateOffsets += stateSize * stateSize - (currZeroPos[0] + currZeroPos[1] * stateSize);
             goalStateOffsets += stateSize * stateSize - (goalZeroPos[0] + goalZeroPos[1] * stateSize);
         }
+        System.out.println("state Offsets = " + currStateOffsets);
+        System.out.println("goal Offsets = " + goalStateOffsets);
         if (currStateOffsets % 2 != goalStateOffsets % 2){
             System.err.println("ERROR: Puzzle is Unsolvable");
             System.exit(1);

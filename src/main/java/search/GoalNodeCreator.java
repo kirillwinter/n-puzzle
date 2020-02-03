@@ -4,49 +4,60 @@ import java.util.HashMap;
 
 public class GoalNodeCreator {
 
-    public static int[][] createFirstZeroGoalNode(int size, HashMap<Integer, Coordinate> coordinates){
+    public static Node createFirstZeroGoalNode(int size, HashMap<Integer, Coordinate> coordinates){
         int[][] state = initState(size);
         int value = 0;
+        int zeroX = Integer.MAX_VALUE;
+        int zeroY = Integer.MAX_VALUE;
 
         Coordinate coordinate;
 
         for (int i = 0; i < state.length; i++) {
             for (int j = 0; j < state[i].length; j++) {
 
+                if (value == 0){
+                    zeroX = j;
+                    zeroY = i;
+                }
+
                 coordinate = new Coordinate();
-                coordinate.setyPos(i);
-                coordinate.setxPos(j);
+                coordinate.setYPos(i);
+                coordinate.setXPos(j);
                 coordinates.put(value, coordinate);
                 state[i][j] = value++;
             }
         }
-        return state;
+        return new Node(null, state, zeroX, zeroY);
     }
 
 
 
-    public static int[][] createLastZeroGoalNode(int size, HashMap<Integer, Coordinate> coordinates){
+    public static Node createLastZeroGoalNode(int size, HashMap<Integer, Coordinate> coordinates){
         int[][] state = initState(size);
+        int zeroX = Integer.MAX_VALUE;
+        int zeroY = Integer.MAX_VALUE;
         int value = 1;
 
         Coordinate coordinate;
         for (int i = 0; i < state.length; i++) {
             for (int j = 0; j < state[i].length; j++) {
-                if (value == size * size)
+                if (value == size * size){
                     value = 0;
+                    zeroX = j;
+                    zeroY = i;
+                }
                 coordinate = new Coordinate();
-                coordinate.setyPos(i);
-                coordinate.setxPos(j);
+                coordinate.setYPos(i);
+                coordinate.setXPos(j);
                 coordinates.put(value, coordinate);
                 state[i][j] = value++;
             }
         }
-//        state[size - 1][size - 1] = 0;
-        return state;
+        return new Node(null, state, zeroX, zeroY);
     }
 
 
-    public static int[][] createSnakeGoalNode(int size, HashMap<Integer, Coordinate> coordinates){
+    public static Node createSnakeGoalNode(int size, HashMap<Integer, Coordinate> coordinates){
 
         int[][] state = initState(size);
 
@@ -58,6 +69,8 @@ public class GoalNodeCreator {
 //        Mas - название двумерного массива
 //        index - собственно позиция внутри массива
 
+        int zeroX = Integer.MAX_VALUE;
+        int zeroY = Integer.MAX_VALUE;
 
         int sizeX = size;
         int sizeY = size;
@@ -74,14 +87,17 @@ public class GoalNodeCreator {
                 for (int index = 0; index < (Math.max(sizeX, sizeY)); index++ )
                 {
 
-                    if (value == summ)
+                    if (value == summ){
                         value = 0;
+
+                    }
+
 
                     if ( side == 0 && index < sizeX - correctX && value <= summ){
                         coordinate = new  Coordinate();
                         state[side + correctY][index + correctX] = value;
-                        coordinate.setyPos(side + correctY);
-                        coordinate.setxPos(index + correctX);
+                        coordinate.setYPos(side + correctY);
+                        coordinate.setXPos(index + correctX);
                         coordinates.put(value, coordinate);
                         value++;
 
@@ -90,8 +106,8 @@ public class GoalNodeCreator {
                     else if ( side == 1 && index < sizeY - correctY && index != 0 && value <= summ ){
                         coordinate = new  Coordinate();
                         state[index + correctY][sizeX - 1] = value;
-                        coordinate.setyPos(index + correctY);
-                        coordinate.setxPos(sizeX - 1);
+                        coordinate.setYPos(index + correctY);
+                        coordinate.setXPos(sizeX - 1);
                         coordinates.put(value, coordinate);
                         value++;
                     }
@@ -99,8 +115,8 @@ public class GoalNodeCreator {
                     else if ( side == 2 && index < sizeX - correctX && index != 0 && value <= summ ){
                         coordinate = new  Coordinate();
                         state[sizeY - 1][sizeX - (index + 1)] = value;
-                        coordinate.setyPos(sizeY - 1);
-                        coordinate.setxPos(sizeX - (index + 1));
+                        coordinate.setYPos(sizeY - 1);
+                        coordinate.setXPos(sizeX - (index + 1));
                         coordinates.put(value, coordinate);
                         value++;
                     }
@@ -108,8 +124,8 @@ public class GoalNodeCreator {
                     else if ( side == 3 && index < sizeY - ( correctY + 1 ) && index != 0 && value <= summ ){
                         coordinate = new  Coordinate();
                         state[sizeY - (index + 1)][correctY] = value;
-                        coordinate.setyPos(sizeY - (index + 1));
-                        coordinate.setxPos(correctY);
+                        coordinate.setYPos(sizeY - (index + 1));
+                        coordinate.setXPos(correctY);
                         coordinates.put(value, coordinate);
                         value++;
                     }
@@ -120,7 +136,9 @@ public class GoalNodeCreator {
             correctY += 1;
             correctX += 1;
         }
-        return state;
+        zeroX = coordinates.get(0).getXPos();
+        zeroY = coordinates.get(0).getYPos();
+        return new Node(null, state, zeroX, zeroY);
     }
 
     private static int[][] initState(int size){

@@ -12,25 +12,26 @@ public class Ida {
     private Node endPathNode;
     private Node goalNode;
     private long countVisited = 0;
-    private IHeuristicFunction heuristicFunction;
     private HashSet<Node> close = new HashSet<>();
     private final static int FOUND = Integer.MIN_VALUE;
     private long countNotPut = 0;
+    private boolean debug;
 
-    public Ida(IHeuristicFunction heuristicFunction, Node goalNode) {
-        this.heuristicFunction = heuristicFunction;
+    public Ida(Node goalNode, boolean debug) {
         this.goalNode = goalNode;
+        this.debug = debug;
     }
 
     public int main(Node root){
-
-        System.out.println("h = " + this.heuristicFunction.calculateHeuristic(root));
 
         int currentBound = root.getH();
 
         int i = 0;
         while (true){
-            System.out.println("i = " + i++ + " currentBound = " + currentBound);
+
+            if (debug)
+                System.out.println("i = " + i++ + " currentBound = " + currentBound);
+
             int smallestBound = search(root, currentBound);
 
             if (smallestBound == FOUND)
@@ -54,13 +55,13 @@ public class Ida {
 
         close.add(node);
 
-        if (node.getF() > bound)
+        if (node.getF() > bound){
             return node.getF();
+        }
+
 
         // isGoal
         if (node.equals(goalNode)){
-            System.out.println(node.equals(goalNode));
-
             System.out.println("FOUND");
             System.out.println("countVisited = " + countVisited);
             System.out.println("close = " + close.size());
@@ -80,7 +81,6 @@ public class Ida {
                 if (currentBound == FOUND){
                     return FOUND;
                 }
-
                 if (currentBound < minBound)
                     minBound = currentBound;
                 close.remove(child);
@@ -90,7 +90,6 @@ public class Ida {
         }
         return minBound;
     }
-
 
 
     public List<Node> getPath() {
