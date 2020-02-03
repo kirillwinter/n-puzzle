@@ -25,6 +25,7 @@ public class Main {
         // TODO  теряются рещения при  ASTAR
         // TODO 3 эвристики + выбор параметром
         // TODO инициализация maxQueue для А*
+        // TODO сохранение в файл для визуалазации
 
         // установка дефолтных значений
         AlgorithmEnum algorithm;
