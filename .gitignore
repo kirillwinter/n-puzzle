@@ -3,3 +3,4 @@
 venv
 *.class
 .idea/
+target/classes
