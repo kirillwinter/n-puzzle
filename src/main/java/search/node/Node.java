@@ -2,11 +2,13 @@ package search.node;
 
 import lombok.Getter;
 import lombok.Setter;
-import search.heuristic.IHeuristicFunction;
 import search.algorithm.AlgorithmEnum;
+import search.heuristic.IHeuristicFunction;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
 @Getter
 @Setter
@@ -58,16 +60,16 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
         this.zeroY = zeroY;
     }
 
-    public PriorityQueue<Node> getSuccessors(){
+    public PriorityQueue<Node> getSuccessors() {
 
         PriorityQueue<Node> successors = new PriorityQueue<>(4, new NodeComparator());
         Node node;
 
-        node = getSuccessor(getNewState(),  zeroX, zeroY + 1);
+        node = getSuccessor(getNewState(), zeroX, zeroY + 1);
         if (node != null)
             successors.add(node);
 
-        node = getSuccessor(getNewState(),   zeroX, zeroY - 1);
+        node = getSuccessor(getNewState(), zeroX, zeroY - 1);
         if (node != null)
             successors.add(node);
 
@@ -75,7 +77,7 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
         if (node != null)
             successors.add(node);
 
-        node = getSuccessor(getNewState(),  zeroX + 1, zeroY);
+        node = getSuccessor(getNewState(), zeroX + 1, zeroY);
         if (node != null)
             successors.add(node);
 
@@ -83,14 +85,13 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
     }
 
 
-
-    private Node getSuccessor(int[][] newState,  int newZeroX, int newZeroY) {
+    private Node getSuccessor(int[][] newState, int newZeroX, int newZeroY) {
 
         if (newZeroX > -1 && newZeroX < state.length && newZeroY > -1 && newZeroY < state.length) {
             int t = newState[newZeroY][newZeroX];
             newState[newZeroY][newZeroX] = newState[zeroY][zeroX];
             newState[zeroY][zeroX] = t;
-            return new Node(this,  newState, newZeroX, newZeroY, heuristicFunction, algorithm);
+            return new Node(this, newState, newZeroX, newZeroY, heuristicFunction, algorithm);
         } else
             return null;
 
@@ -109,11 +110,12 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
         }
         return result;
     }
-    public void print(){
 
-        for (int i = 0; i < state.length; i++) {
-            for (int j = 0; j < state[i].length; j++) {
-                System.out.print(state[i][j] + "\t");
+    public void print() {
+
+        for (int[] ints : state) {
+            for (int anInt : ints) {
+                System.out.print(anInt + "\t");
             }
             System.out.println();
         }
@@ -125,8 +127,7 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
     public int compare(Node a, Node b) {
         if (a.getF() == b.getF()) {
             return b.getG() - a.getG();
-        }
-        else {
+        } else {
             return a.getF() - b.getF();
         }
     }

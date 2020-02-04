@@ -8,15 +8,15 @@ import java.util.List;
 
 abstract class AbstractAlgorithm {
 
-     Node goalNode;
-     Node endPathNode;
-     HashSet<Node> closeSet = new HashSet<>();
-     boolean debug;
-     long countVisited = 0;
-     long countNotPut = 0;
+    Node goalNode;
+    Node endPathNode;
+    HashSet<Node> closeSet = new HashSet<>();
+    boolean debug;
+    long countVisited = 0;
+    long countNotPut = 0;
 
-    public int main(Node root){
-        return  0;
+    public int main(Node root) {
+        return 0;
     }
 
     public List<Node> getPath() {
@@ -29,11 +29,11 @@ abstract class AbstractAlgorithm {
         return path;
     }
 
-    void printResult(){
+    void printResult() {
         System.out.println("countVisited = " + countVisited);
         System.out.println("closeSet = " + closeSet.size());
         System.out.println("countNotPut = " + countNotPut);
     }
 
-    
+
 }

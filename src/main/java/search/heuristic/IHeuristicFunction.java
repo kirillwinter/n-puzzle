@@ -4,7 +4,8 @@ package search.heuristic;
 import search.node.Coordinate;
 import search.node.Node;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class IHeuristicFunction {
 
@@ -40,8 +41,76 @@ public class IHeuristicFunction {
         return 0;
     }
 
-    private int lastMove(Node node){
-        if (!lastMoveList.contains(node)){
+    // TODO вынести выбор эвристики в отдельный класс
+    private int calculateSimple(Node node) {
+        int h = 0;
+        for (int i = 0; i < node.getState().length; i++) {
+            for (int j = 0; j < node.getState()[i].length; j++) {
+                if (node.getState()[i][j] == 0) continue;
+                if (node.getState()[i][j] != goalNode.getState()[i][j])
+                    h++;
+            }
+        }
+        return h;
+    }
+
+    private int calculateManhattan(Node node) {
+        int h = 0;
+        for (int i = 0; i < node.getState().length; i++) {
+            for (int j = 0; j < node.getState()[i].length; j++) {
+                if (node.getState()[i][j] == 0) continue;
+                h += manhattanDistance(node.getState()[i][j], i, j);
+            }
+        }
+        return h;
+    }
+
+    private int calculateManhattanAndLinearConflict(Node node) {
+
+        int h = 0;
+        for (int i = 0; i < node.getState().length; i++) {
+            for (int j = 0; j < node.getState()[i].length; j++) {
+                if (node.getState()[i][j] == 0) continue;
+                h += manhattanDistance(node.getState()[i][j], i, j);
+                h += verticalLinearConflict(node, i, j);
+                h += horizontalLinearConflict(node, i, j);
+            }
+        }
+        return h;
+    }
+
+    private int calculateManhattanAndLastMove(Node node) {
+
+        int h = 0;
+        for (int i = 0; i < node.getState().length; i++) {
+            for (int j = 0; j < node.getState()[i].length; j++) {
+                if (node.getState()[i][j] == 0) continue;
+                h += manhattanDistance(node.getState()[i][j], i, j);
+
+            }
+        }
+        h += lastMove(node);
+        return h;
+    }
+
+    private int calculateManhattanAndLinearConflictAndLastMove(Node node) {
+
+        int h = 0;
+        for (int i = 0; i < node.getState().length; i++) {
+            for (int j = 0; j < node.getState()[i].length; j++) {
+                if (node.getState()[i][j] == 0) continue;
+                h += manhattanDistance(node.getState()[i][j], i, j);
+                h += verticalLinearConflict(node, i, j);
+                h += horizontalLinearConflict(node, i, j);
+            }
+        }
+        h += lastMove(node);
+        return h;
+    }
+
+
+    private int lastMove(Node node) {
+        if (!lastMoveList.contains(node)) {
             return 2;
         } else {
             System.out.println("find last");
@@ -50,7 +119,7 @@ public class IHeuristicFunction {
 
     }
 
-    private int getManhattanDistance(int value, int i, int j){
+    private int manhattanDistance(int value, int i, int j) {
 
         if (value == 0)
             return 0;
@@ -133,9 +202,6 @@ public class IHeuristicFunction {
     private int[][] getNewState() {
 
         int[][] state = goalNode.getState();
-        if (state == null) {
-            return null;
-        }
 
         final int[][] result = new int[state.length][];
         for (int i = 0; i < state.length; i++) {

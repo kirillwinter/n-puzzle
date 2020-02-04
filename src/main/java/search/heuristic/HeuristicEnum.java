@@ -1,6 +1,6 @@
 package search.heuristic;
 
-public enum  HeuristicEnum {
+public enum HeuristicEnum {
     SIMPLE, // фишки не на своих местах
     MANHATTAN, // манхеттанское растояние
     MANHATTAN_AND_LINEAR_CONFLICT,

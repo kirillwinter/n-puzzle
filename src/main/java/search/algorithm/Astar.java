@@ -18,18 +18,17 @@ public class Astar extends AbstractAlgorithm {
 
     @Override
     public int main(Node root) {
-        PriorityQueue<Node> openQueue = new  PriorityQueue<>(4, new NodeComparator());
+        PriorityQueue<Node> openQueue = new PriorityQueue<>(4, new NodeComparator());
 
         //TODO : Check memory
         openQueue.add(root);
 
         int minH = root.getH();
         Node currentNode;
-        while((currentNode = openQueue.poll()) != null)
-        {
+        while ((currentNode = openQueue.poll()) != null) {
             countVisited++;
 
-            if (maxQueue <= openQueue.size()){
+            if (maxQueue <= openQueue.size()) {
                 System.err.println("ERROR: Out of bound open queue: " + openQueue.size());
                 printResult();
                 System.exit(1);
@@ -42,7 +41,7 @@ public class Astar extends AbstractAlgorithm {
             }
 
             closeSet.add(currentNode);
-            if (currentNode.equals(goalNode)){
+            if (currentNode.equals(goalNode)) {
                 endPathNode = currentNode;
                 printResult();
                 return 1;
@@ -51,13 +50,13 @@ public class Astar extends AbstractAlgorithm {
             int fCurrent = currentNode.getF();
             PriorityQueue<Node> children = currentNode.getSuccessors();
             Node child;
-            while((child = children.poll()) != null) {
+            while ((child = children.poll()) != null) {
                 int fChildren = child.getF();
 //                if (!closeSet.contains(child) && !openQueue.contains(child) && fChildren <= fCurrent + 1) // TODO доработать условие
 //                    openQueue.add(child);
 
 
-                if (closeSet.contains(child) || openQueue.contains(child)){
+                if (closeSet.contains(child) || openQueue.contains(child)) {
                     countNotPut++;
                     continue;
                 }
@@ -71,8 +70,6 @@ public class Astar extends AbstractAlgorithm {
         System.exit(1);
         return 0;
     }
-
-
 
 
 }

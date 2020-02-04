@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <appender name="ConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level -- %logger{64}.%M - %msg%n
+            </Pattern>
+        </encoder>
+    </appender>
+
+
+    <appender name="AsyncConsoleAppender" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="ConsoleAppender"/>
+    </appender>
+
+    <root level="error">
+        <appender-ref ref="AsyncConsoleAppender"/>
+    </root>
+
+    <!--Кастомный log level для пакета-->
+    <logger name="search" level="debug"/>
+</configuration>

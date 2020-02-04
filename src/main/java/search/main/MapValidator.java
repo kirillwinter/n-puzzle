@@ -1,13 +1,14 @@
 package search.main;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 public class MapValidator {
@@ -90,14 +91,20 @@ public class MapValidator {
 
     private void setMapList() {
 
-         state = new int[size][size];
-         int i = 0;
-         for (String line : linesList) {
-             state[i] = Arrays.stream(line.split(" +|\t+"))
-                     .mapToInt(Integer::parseInt)
-                     .toArray();
-             i++;
-         }
+        state = new int[size][size];
+        int i = 0;
+        try {
+            for (String line : linesList) {
+                state[i] = Arrays.stream(line.split(" +|\t+"))
+                        .mapToInt(Integer::parseInt)
+                        .toArray();
+                i++;
+            }
+        } catch (Exception e) {
+            System.err.println("ERROR:  Incorrect format ");
+            System.exit(1);
+        }
+
     }
 
     private void checkNumberSequence() {
