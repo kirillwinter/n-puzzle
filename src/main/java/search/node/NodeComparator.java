@@ -1,4 +1,5 @@
-package search;
+package search.node;
+
 
 import java.util.Comparator;
 

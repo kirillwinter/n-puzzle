@@ -1,4 +1,4 @@
-package search.main;
+package search.node;
 
 public enum  GoalStateEnum {
     SNAKE,

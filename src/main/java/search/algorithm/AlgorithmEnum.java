@@ -1,4 +1,4 @@
-package search.main;
+package search.algorithm;
 
 public enum AlgorithmEnum {
     IDA,

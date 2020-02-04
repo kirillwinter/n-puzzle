@@ -1,4 +1,4 @@
-package search;
+package search.main;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -27,17 +27,13 @@ public class MapValidator {
 
         try {
             File file = new File(fileName);
-            //создаем объект FileReader для объекта File
             FileReader fr = new FileReader(file);
-            //создаем BufferedReader с существующего FileReader для построчного считывания
             BufferedReader reader = new BufferedReader(fr);
-            // считаем сначала первую строку
             String line = reader.readLine();
 
             while (line != null) {
                 linesList.add(line);
                 System.out.println(line);
-                // считываем остальные строки в цикле
                 line = reader.readLine();
             }
         } catch (IOException e) {
@@ -102,7 +98,6 @@ public class MapValidator {
                      .toArray();
              i++;
          }
-        System.out.println(size);
     }
 
     private void checkNumberSequence() {
@@ -176,7 +171,7 @@ public class MapValidator {
 
 // -----------------------------
 
-    public void checkResolve(int[][] goalState) {
+    public void checkResolve(int[][] goalState, boolean debug) {
 
         int currStateOffsets = numberOfOffsets(state);
         int goalStateOffsets = numberOfOffsets(goalState);
@@ -189,8 +184,10 @@ public class MapValidator {
             currStateOffsets += stateSize * stateSize - (currZeroPos[0] + currZeroPos[1] * stateSize);
             goalStateOffsets += stateSize * stateSize - (goalZeroPos[0] + goalZeroPos[1] * stateSize);
         }
-        System.out.println("state Offsets = " + currStateOffsets);
-        System.out.println("goal Offsets = " + goalStateOffsets);
+        if (debug){
+            System.out.println("state Offsets = " + currStateOffsets);
+            System.out.println("goal Offsets = " + goalStateOffsets);
+        }
         if (currStateOffsets % 2 != goalStateOffsets % 2){
             System.err.println("ERROR: Puzzle is Unsolvable");
             System.exit(1);
@@ -201,8 +198,7 @@ public class MapValidator {
         int[] zero = new int[2];
         for (int y = 0; y < state.length; y++) {
             for (int x = 0; x < state.length; x++) {
-                if (state[y][x] == 0)
-                {
+                if (state[y][x] == 0) {
                     zero[0] = x;
                     zero[1] = y;
                 }
@@ -211,18 +207,13 @@ public class MapValidator {
         return zero;
     }
 
-    int numberOfOffsets(int[][] state)
-    {
+    int numberOfOffsets(int[][] state) {
         int[] sequence = stateToSequence(state);
         int offsets = 0;
-        for (int i = 0; i < sequence.length - 1; i++)
-        {
-            if (sequence[i] != 0)
-            {
-                for (int j = i + 1; j < sequence.length; j++)
-                {
-                    if (sequence[j] != 0 && sequence[j] < sequence[i])
-                    {
+        for (int i = 0; i < sequence.length - 1; i++) {
+            if (sequence[i] != 0) {
+                for (int j = i + 1; j < sequence.length; j++) {
+                    if (sequence[j] != 0 && sequence[j] < sequence[i]) {
                         offsets++;
                     }
                 }
@@ -231,21 +222,11 @@ public class MapValidator {
         return offsets;
     }
 
-    int[] stateToSequence(int[][] state)
-    {
+    int[] stateToSequence(int[][] state) {
         int[] sequence = new int[state.length * state.length];
-        for (int y = 0; y < state.length; y++)
-        {
-            for (int x = 0; x < state.length; x++)
-            {
-                sequence[x + y * state.length] = state[y][x];
-            }
+        for (int y = 0; y < state.length; y++) {
+            System.arraycopy(state[y], 0, sequence, y * state.length, state.length);
         }
         return sequence;
     }
-
-
-
-
-
 }

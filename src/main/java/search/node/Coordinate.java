@@ -1,4 +1,4 @@
-package search;
+package search.node;
 
 import lombok.Getter;
 import lombok.Setter;

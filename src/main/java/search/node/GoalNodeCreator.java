@@ -1,4 +1,7 @@
-package search;
+package search.node;
+
+import search.node.Coordinate;
+import search.node.Node;
 
 import java.util.HashMap;
 
@@ -87,11 +90,8 @@ public class GoalNodeCreator {
                 for (int index = 0; index < (Math.max(sizeX, sizeY)); index++ )
                 {
 
-                    if (value == summ){
+                    if (value == summ)
                         value = 0;
-
-                    }
-
 
                     if ( side == 0 && index < sizeX - correctX && value <= summ){
                         coordinate = new  Coordinate();
@@ -100,7 +100,6 @@ public class GoalNodeCreator {
                         coordinate.setXPos(index + correctX);
                         coordinates.put(value, coordinate);
                         value++;
-
                     }
 
                     else if ( side == 1 && index < sizeY - correctY && index != 0 && value <= summ ){

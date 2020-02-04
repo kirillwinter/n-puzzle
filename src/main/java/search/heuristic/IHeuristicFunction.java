@@ -1,8 +1,8 @@
-package search.algorithm;
+package search.heuristic;
 
 
-import search.Coordinate;
-import search.Node;
+import search.node.Coordinate;
+import search.node.Node;
 
 import java.util.*;
 
@@ -11,34 +11,33 @@ public class IHeuristicFunction {
     private HashMap<Integer, Coordinate> coordinatesGoalNode;
     private Node goalNode;
     private HashSet<Node> lastMoveList;
-    private boolean flag;
+    private HeuristicEnum heuristicEnum;
 
-    public IHeuristicFunction(Node goalNode, HashMap<Integer, Coordinate> coordinatesGoalNode) {
+    public IHeuristicFunction(Node goalNode, HashMap<Integer, Coordinate> coordinatesGoalNode, HeuristicEnum heuristicEnum) {
         this.goalNode = goalNode;
         this.coordinatesGoalNode = coordinatesGoalNode;
-        getLastMoveState();
-        flag = true;
+        this.heuristicEnum = heuristicEnum;
+        if (heuristicEnum == HeuristicEnum.MANHATTAN_AND_LAST_MOVE || heuristicEnum == HeuristicEnum.MANHATTAN_LC_LM)
+            getLastMoveState();
     }
 
     public int calculateHeuristic(Node node){
 
-        int h = 0;
-        for (int i = 0; i < node.getState().length; i++) {
-            for (int j = 0; j < node.getState()[i].length; j++) {
-
-                if (node.getState()[i][j] == 0) continue;
-
-
-                if (flag)
-                    h += getManhattanDistance(node.getState()[i][j], i, j);
-                h += verticalLinearConflict(node, i, j);
-                h += horizontalLinearConflict(node, i, j);
-////
-            }
-        }
-        // TODO оптимизировать
-        h += lastMove(node);
-        return h;
+       switch (heuristicEnum){
+           case SIMPLE:
+               return calculateSimple(node);
+           case MANHATTAN:
+               return calculateManhattan(node);
+           case MANHATTAN_AND_LINEAR_CONFLICT:
+               return calculateManhattanAndLinearConflict(node);
+           case MANHATTAN_AND_LAST_MOVE:
+               return calculateManhattanAndLastMove(node);
+           case MANHATTAN_LC_LM:
+               return calculateManhattanAndLinearConflictAndLastMove(node);
+       }
+        System.err.println("Invalid Heuristic");
+        System.exit(1);
+        return 0;
     }
 
     private int lastMove(Node node){
@@ -56,14 +55,12 @@ public class IHeuristicFunction {
         if (value == 0)
             return 0;
         Coordinate coordinate = coordinatesGoalNode.get(value);
-        int dist = Math.abs(coordinate.getXPos() - j) + Math.abs(coordinate.getYPos() - i);
-        return (dist);
+        return Math.abs(coordinate.getXPos() - j) + Math.abs(coordinate.getYPos() - i);
     }
 
     private int verticalLinearConflict(Node node, int y, int x) {
         int h = 0;
-        for(int y2 = y + 1; y2 < node.getState().length; y2++)
-        {
+        for(int y2 = y + 1; y2 < node.getState().length; y2++) {
             if (checkSequence(node, y, x, y2, x))
                 h += 2;
         }
@@ -72,8 +69,7 @@ public class IHeuristicFunction {
 
     private int horizontalLinearConflict(Node node, int y, int x){
         int h = 0;
-        for(int x2 = x + 1; x2 < node.getState()[y].length; x2++)
-        {
+        for(int x2 = x + 1; x2 < node.getState()[y].length; x2++) {
             if (checkSequence(node, y, x, y, x2))
                 h += 2;
         }
@@ -97,7 +93,7 @@ public class IHeuristicFunction {
     }
 
 
-
+// TODO убрать дублирование кода (этот же код в Node)
     private void getLastMoveState(){
         lastMoveList = new HashSet<>();
 
@@ -120,7 +116,7 @@ public class IHeuristicFunction {
             lastMoveList.add(node);
     }
 
-    private Node getSuccessor(int[][] newState,  int newZeroX, int newZeroY) {  //  в этом методе меняем ноль и соседнее число
+    private Node getSuccessor(int[][] newState,  int newZeroX, int newZeroY) {
 
         int[][] state = goalNode.getState();
         if (newZeroX > -1 && newZeroX < state.length && newZeroY > -1 && newZeroY < state.length) {

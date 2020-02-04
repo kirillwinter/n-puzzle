@@ -1,9 +1,9 @@
-package search;
+package search.node;
 
 import lombok.Getter;
 import lombok.Setter;
-import search.algorithm.IHeuristicFunction;
-import search.main.AlgorithmEnum;
+import search.heuristic.IHeuristicFunction;
+import search.algorithm.AlgorithmEnum;
 
 import java.io.Serializable;
 import java.util.*;
@@ -90,9 +90,7 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
             int t = newState[newZeroY][newZeroX];
             newState[newZeroY][newZeroX] = newState[zeroY][zeroX];
             newState[zeroY][zeroX] = t;
-            Node node = new Node(this,  newState, newZeroX, newZeroY, heuristicFunction, algorithm);
-//            node.setParent(this);
-            return node;
+            return new Node(this,  newState, newZeroX, newZeroY, heuristicFunction, algorithm);
         } else
             return null;
 
@@ -144,7 +142,6 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
     @Override
     // TODO может нужно оптимизировать hashCode
     public int hashCode() {
-//        return zeroY * 100 + zeroX;
         return Arrays.deepHashCode(state);
     }
 
