@@ -1,16 +1,17 @@
 package search.algorithm;
 
+import lombok.extern.slf4j.Slf4j;
 import search.node.Node;
 
 import java.util.PriorityQueue;
 
+@Slf4j
 public class Ida extends AbstractAlgorithm {
 
     private static final int FOUND = Integer.MIN_VALUE;
 
-    public Ida(Node goalNode, boolean debug) {
+    public Ida(Node goalNode) {
         this.goalNode = goalNode;
-        this.debug = debug;
     }
 
     @Override
@@ -21,8 +22,7 @@ public class Ida extends AbstractAlgorithm {
         int i = 0;
         while (true) {
 
-            if (debug)
-                System.out.println("i = " + i++ + " currentBound = " + currentBound);
+            log.debug("i = " + i++ + " currentBound = " + currentBound);
 
             int smallestBound = search(root, currentBound);
 
@@ -30,7 +30,7 @@ public class Ida extends AbstractAlgorithm {
                 return currentBound;
 
             if (smallestBound == Integer.MAX_VALUE) {
-                System.out.println("NO_FOUND");
+                log.error("NO_FOUND");
                 printResult();
                 root.print();
                 System.exit(1);
@@ -52,7 +52,7 @@ public class Ida extends AbstractAlgorithm {
 
         // isGoal
         if (node.equals(goalNode)) {
-            System.out.println("FOUND");
+            log.info("FOUND");
             printResult();
             endPathNode = node;
             return FOUND;

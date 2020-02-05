@@ -23,7 +23,7 @@
     <repositories>
         <repository>
             <id>java-net-repo</id>
-            <url>http://repo1.maven.org/maven2</url>
+            <url>https://repo1.maven.org/maven2</url>
         </repository>
     </repositories>
 
@@ -31,7 +31,7 @@
         <pluginRepository>
             <id>central</id>
             <name>Central Repository</name>
-            <url>http://repo1.maven.org/maven2</url>
+            <url>https://repo1.maven.org/maven2</url>
             <layout>default</layout>
             <snapshots>
                 <enabled>false</enabled>

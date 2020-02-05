@@ -1,17 +1,18 @@
 package search.algorithm;
 
+import lombok.extern.slf4j.Slf4j;
 import search.node.Node;
 import search.node.NodeComparator;
 
 import java.util.PriorityQueue;
 
+@Slf4j
 public class Astar extends AbstractAlgorithm {
 
     int maxQueue;
 
-    public Astar(Node goalNode, int maxQueue, boolean debug) {
+    public Astar(Node goalNode, int maxQueue) {
         this.goalNode = goalNode;
-        this.debug = debug;
         this.maxQueue = maxQueue;
     }
 
@@ -29,15 +30,14 @@ public class Astar extends AbstractAlgorithm {
             countVisited++;
 
             if (maxQueue <= openQueue.size()) {
-                System.err.println("ERROR: Out of bound open queue: " + openQueue.size());
+                log.error("ERROR: Out of bound open queue: " + openQueue.size());
                 printResult();
                 System.exit(1);
             }
 
             if (minH > currentNode.getH()) {
                 minH = currentNode.getH();
-                if (debug)
-                    System.out.println("minH: " + minH + " openQueue=" + openQueue.size());
+                log.debug("minH: " + minH + " openQueue=" + openQueue.size());
             }
 
             closeSet.add(currentNode);

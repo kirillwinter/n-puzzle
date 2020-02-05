@@ -99,10 +99,6 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
 
     private int[][] getNewState() {
 
-        if (state == null) {
-            return null;
-        }
-
         final int[][] result = new int[state.length][];
         for (int i = 0; i < state.length; i++) {
             result[i] = new int[state[i].length];

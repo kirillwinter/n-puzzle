@@ -1,12 +1,14 @@
 package search.heuristic;
 
 
+import lombok.extern.slf4j.Slf4j;
 import search.node.Coordinate;
 import search.node.Node;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
+@Slf4j
 public class IHeuristicFunction {
 
     private HashMap<Integer, Coordinate> coordinatesGoalNode;
@@ -22,21 +24,21 @@ public class IHeuristicFunction {
             getLastMoveState();
     }
 
-    public int calculateHeuristic(Node node){
+    public int calculateHeuristic(Node node) {
 
-       switch (heuristicEnum){
-           case SIMPLE:
-               return calculateSimple(node);
-           case MANHATTAN:
-               return calculateManhattan(node);
-           case MANHATTAN_AND_LINEAR_CONFLICT:
-               return calculateManhattanAndLinearConflict(node);
-           case MANHATTAN_AND_LAST_MOVE:
-               return calculateManhattanAndLastMove(node);
-           case MANHATTAN_LC_LM:
-               return calculateManhattanAndLinearConflictAndLastMove(node);
-       }
-        System.err.println("Invalid Heuristic");
+        switch (heuristicEnum) {
+            case SIMPLE:
+                return calculateSimple(node);
+            case MANHATTAN:
+                return calculateManhattan(node);
+            case MANHATTAN_AND_LINEAR_CONFLICT:
+                return calculateManhattanAndLinearConflict(node);
+            case MANHATTAN_AND_LAST_MOVE:
+                return calculateManhattanAndLastMove(node);
+            case MANHATTAN_LC_LM:
+                return calculateManhattanAndLinearConflictAndLastMove(node);
+        }
+        log.error("Invalid Heuristic");
         System.exit(1);
         return 0;
     }
@@ -110,11 +112,10 @@ public class IHeuristicFunction {
 
 
     private int lastMove(Node node) {
-        if (!lastMoveList.contains(node)) {
+        if (!lastMoveList.contains(node))
             return 2;
-        } else {
-            System.out.println("find last");
-        }
+        else
+            log.debug("find last in lastMove");
         return 0;
 
     }
@@ -129,16 +130,16 @@ public class IHeuristicFunction {
 
     private int verticalLinearConflict(Node node, int y, int x) {
         int h = 0;
-        for(int y2 = y + 1; y2 < node.getState().length; y2++) {
+        for (int y2 = y + 1; y2 < node.getState().length; y2++) {
             if (checkSequence(node, y, x, y2, x))
                 h += 2;
         }
         return h;
     }
 
-    private int horizontalLinearConflict(Node node, int y, int x){
+    private int horizontalLinearConflict(Node node, int y, int x) {
         int h = 0;
-        for(int x2 = x + 1; x2 < node.getState()[y].length; x2++) {
+        for (int x2 = x + 1; x2 < node.getState()[y].length; x2++) {
             if (checkSequence(node, y, x, y, x2))
                 h += 2;
         }
@@ -162,17 +163,17 @@ public class IHeuristicFunction {
     }
 
 
-// TODO убрать дублирование кода (этот же код в Node)
-    private void getLastMoveState(){
+    // TODO убрать дублирование кода (этот же код в Node)
+    private void getLastMoveState() {
         lastMoveList = new HashSet<>();
 
         Node node;
 
-        node = getSuccessor(getNewState(),  goalNode.getZeroX(), goalNode.getZeroY() + 1);
+        node = getSuccessor(getNewState(), goalNode.getZeroX(), goalNode.getZeroY() + 1);
         if (node != null)
             lastMoveList.add(node);
 
-        node = getSuccessor(getNewState(),   goalNode.getZeroX(), goalNode.getZeroY() - 1);
+        node = getSuccessor(getNewState(), goalNode.getZeroX(), goalNode.getZeroY() - 1);
         if (node != null)
             lastMoveList.add(node);
 
@@ -180,19 +181,19 @@ public class IHeuristicFunction {
         if (node != null)
             lastMoveList.add(node);
 
-        node = getSuccessor(getNewState(),  goalNode.getZeroX() + 1, goalNode.getZeroY());
+        node = getSuccessor(getNewState(), goalNode.getZeroX() + 1, goalNode.getZeroY());
         if (node != null)
             lastMoveList.add(node);
     }
 
-    private Node getSuccessor(int[][] newState,  int newZeroX, int newZeroY) {
+    private Node getSuccessor(int[][] newState, int newZeroX, int newZeroY) {
 
         int[][] state = goalNode.getState();
         if (newZeroX > -1 && newZeroX < state.length && newZeroY > -1 && newZeroY < state.length) {
             int t = newState[newZeroY][newZeroX];
             newState[newZeroY][newZeroX] = newState[goalNode.getZeroY()][goalNode.getZeroX()];
             newState[goalNode.getZeroY()][goalNode.getZeroX()] = t;
-            return new Node(goalNode,  newState, newZeroX, newZeroY);
+            return new Node(goalNode, newState, newZeroX, newZeroY);
         } else
             return null;
 

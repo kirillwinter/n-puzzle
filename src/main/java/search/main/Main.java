@@ -22,7 +22,6 @@ public class Main {
     private static GoalStateEnum goalStateArg = GoalStateEnum.SNAKE;
     private static HeuristicEnum heuristic = HeuristicEnum.MANHATTAN;
     private static int maxQueue = 100000;
-    private static boolean debug = false;
     private static String fileName;
 
 
@@ -32,11 +31,7 @@ public class Main {
         // TODO  везде отлов exception -> test
         // TODO  readme.md
 
-
         long start = System.currentTimeMillis();
-
-        log.debug("start");
-        log.info("info");
 
         if (args[0] != null) {
 
@@ -60,38 +55,37 @@ public class Main {
                     break;
             }
 
-            mapValidator.checkResolve(goalNode.getState(), debug);
+            mapValidator.checkResolve(goalNode.getState());
             IHeuristicFunction heuristicFunction = new IHeuristicFunction(goalNode, coordinatesGoalNode, heuristic);
 
-            if (debug)
-                goalNode.print();
 
             Node initialState = new Node(null, mapValidator.getState(), mapValidator.getZeroXInitState(),
                     mapValidator.getZeroYInitState(), heuristicFunction, algorithm);
 
             List<Node> path;
 
+            log.info("start");
             if (algorithm == AlgorithmEnum.IDA) {
-                Ida ida = new Ida(goalNode, debug);
+                Ida ida = new Ida(goalNode);
                 int res = ida.main(initialState);
-                System.out.println("Ida, res = " + res);
+                log.info("Ida, res = " + res);
                 path = ida.getPath();
             } else {
-                Astar astar = new Astar(goalNode, maxQueue, debug);
+                Astar astar = new Astar(goalNode, maxQueue);
                 int resAstar = astar.main(initialState);
-                System.out.println("Astar, res=" + resAstar);
+                log.info("Astar, res=" + resAstar);
                 path = astar.getPath();
             }
 
-            System.out.println("time complexity = " + (System.currentTimeMillis() - start) / 1000 + "sec");
+            log.info("time complexity = " + (System.currentTimeMillis() - start) / 1000 + "sec");
             for (Node node : path) {
-                System.out.println("h=" + node.getH() + " g=" + node.getG());
+                log.info("h=" + node.getH() + " g=" + node.getG());
                 node.print();
             }
-            System.out.println("steps=" + path.size());
+            log.info("steps=" + path.size());
             System.exit(0);
         } else {
-            System.err.println("Where filename????");
+            log.error("Where filename????");
             System.exit(1);
         }
     }
@@ -122,11 +116,11 @@ public class Main {
                     try {
                         maxQueue = Integer.parseInt(maxQueueArgs[1]);
                     } catch (Exception e) {
-                        System.err.println("Invalid arg: " + arg);
+                        log.error("Invalid arg: " + arg);
                         System.exit(1);
                     }
                 } else {
-                    System.err.println("Invalid arg: " + arg);
+                    log.error("Invalid arg: " + arg);
                     System.exit(1);
                 }
             } else if (arg.contains("-heuristic=")) {
@@ -149,23 +143,20 @@ public class Main {
                             heuristic = HeuristicEnum.MANHATTAN_LC_LM;
                             break;
                         default:
-                            System.err.println("Invalid arg: " + arg);
+                            log.error("Invalid arg: " + arg);
                             System.exit(1);
                     }
                 } else {
-                    System.err.println("Invalid arg: " + arg);
+                    log.error("Invalid arg: " + arg);
                     System.exit(1);
                 }
-            } else if (arg.compareToIgnoreCase("-debug") == 0) {
-                debug = true;
             } else {
-                System.err.println("Invalid arg: " + arg);
+                log.error("Invalid arg: " + arg);
                 System.exit(1);
             }
         }
-        if (debug)
-            for (int i = 0; i < args.length; i++)
-                System.out.println(i + " " + args[i]);
+        for (int i = 0; i < args.length; i++)
+            log.debug(i + " " + args[i]);
     }
 
 }

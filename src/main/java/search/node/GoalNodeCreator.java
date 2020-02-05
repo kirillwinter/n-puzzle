@@ -2,7 +2,9 @@ package search.node;
 
 import java.util.HashMap;
 
-public class GoalNodeCreator {
+public final class GoalNodeCreator {
+
+
 
     public static Node createFirstZeroGoalNode(int size, HashMap<Integer, Coordinate> coordinates) {
         int[][] state = initState(size);
@@ -68,8 +70,8 @@ public class GoalNodeCreator {
 //        Mas - название двумерного массива
 //        index - собственно позиция внутри массива
 
-        int zeroX = Integer.MAX_VALUE;
-        int zeroY = Integer.MAX_VALUE;
+        int zeroX;
+        int zeroY;
 
         int sizeX = size;
         int sizeY = size;

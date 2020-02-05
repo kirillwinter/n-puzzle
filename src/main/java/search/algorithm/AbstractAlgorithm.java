@@ -1,17 +1,18 @@
 package search.algorithm;
 
+import lombok.extern.slf4j.Slf4j;
 import search.node.Node;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+@Slf4j
 abstract class AbstractAlgorithm {
 
     Node goalNode;
     Node endPathNode;
     HashSet<Node> closeSet = new HashSet<>();
-    boolean debug;
     long countVisited = 0;
     long countNotPut = 0;
 
@@ -30,9 +31,9 @@ abstract class AbstractAlgorithm {
     }
 
     void printResult() {
-        System.out.println("countVisited = " + countVisited);
-        System.out.println("closeSet = " + closeSet.size());
-        System.out.println("countNotPut = " + countNotPut);
+        log.info("countVisited = " + countVisited);
+        log.info("closeSet = " + closeSet.size());
+        log.info("countNotPut = " + countNotPut);
     }
 
 
