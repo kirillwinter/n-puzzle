@@ -65,7 +65,7 @@ public class Astar extends AbstractAlgorithm {
 
             }
         }
-        System.out.println("A Star not found");
+        log.error("A Star not found");
         printResult();
         System.exit(1);
         return 0;
