@@ -107,15 +107,19 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
         return result;
     }
 
-    public void print() {
 
+
+    @Override
+    public String toString() {
+
+        StringBuilder res = new StringBuilder();
         for (int[] ints : state) {
             for (int anInt : ints) {
-                System.out.print(anInt + "\t");
+                res.append(anInt).append('\t');
             }
-            System.out.println();
+            res.append('\n');
         }
-        System.out.println();
+        return res.toString();
     }
 
 

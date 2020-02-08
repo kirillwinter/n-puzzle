@@ -21,19 +21,12 @@ public class Astar extends AbstractAlgorithm {
     public int main(Node root) {
         PriorityQueue<Node> openQueue = new PriorityQueue<>(4, new NodeComparator());
 
-        //TODO : Check memory
         openQueue.add(root);
 
         int minH = root.getH();
         Node currentNode;
         while ((currentNode = openQueue.poll()) != null) {
             countVisited++;
-
-            if (maxQueue <= openQueue.size()) {
-                log.error("ERROR: Out of bound open queue: " + openQueue.size());
-                printResult();
-                System.exit(1);
-            }
 
             if (minH > currentNode.getH()) {
                 minH = currentNode.getH();
@@ -52,17 +45,8 @@ public class Astar extends AbstractAlgorithm {
             Node child;
             while ((child = children.poll()) != null) {
                 int fChildren = child.getF();
-//                if (!closeSet.contains(child) && !openQueue.contains(child) && fChildren <= fCurrent + 1) // TODO доработать условие
-//                    openQueue.add(child);
-
-
-                if (closeSet.contains(child) || openQueue.contains(child)) {
-                    countNotPut++;
-                    continue;
-                }
-
-                openQueue.add(child);
-
+                if (!closeSet.contains(child) && !openQueue.contains(child) && fChildren <= fCurrent + 1 && maxQueue >= openQueue.size()) // TODO доработать условие
+                    openQueue.add(child);
             }
         }
         log.error("A Star not found");

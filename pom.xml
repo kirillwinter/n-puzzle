@@ -11,14 +11,27 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
                 <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>search.main.Main</mainClass>
+                        </manifest>
+                    </archive>
                     <source>8</source>
                     <target>8</target>
                 </configuration>
+
             </plugin>
         </plugins>
     </build>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <repositories>
         <repository>
@@ -41,6 +54,7 @@
             </releases>
         </pluginRepository>
     </pluginRepositories>
+
 
     <dependencies>
         <dependency>

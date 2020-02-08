@@ -81,7 +81,13 @@ public class MapValidator {
 
     private void setMapSize() {
         try {
-            size = Integer.parseInt(linesList.get(0));
+            if (linesList.size() > 0)
+                size = Integer.parseInt(linesList.get(0));
+            else {
+                log.error("ERROR: Empty file");
+                System.exit(1);
+            }
+
         } catch (Exception e) {
             log.error("ERROR: Invalid value size: " + linesList.get(0));
             System.exit(1);
@@ -131,8 +137,8 @@ public class MapValidator {
             int[] currZeroPos = getZeroPos(state);
             int[] goalZeroPos = getZeroPos(goalState);
             int stateSize = state.length;
-            currStateOffsets += stateSize * stateSize - (currZeroPos[0] + currZeroPos[1] * stateSize);
-            goalStateOffsets += stateSize * stateSize - (goalZeroPos[0] + goalZeroPos[1] * stateSize);
+            currStateOffsets += stateSize * stateSize - (currZeroPos[1] + currZeroPos[0] * stateSize);
+            goalStateOffsets += stateSize * stateSize - (goalZeroPos[1] + goalZeroPos[0] * stateSize);
         }
         log.debug("state Offsets = " + currStateOffsets);
         log.debug("goal Offsets = " + goalStateOffsets);
@@ -146,7 +152,8 @@ public class MapValidator {
         int[] zero = new int[2];
         for (int y = 0; y < state.length; y++) {
             for (int x = 0; x < state.length; x++) {
-                if (state[y][x] == 0) {
+                if (state[y][x] == 0)
+                {
                     zero[0] = x;
                     zero[1] = y;
                 }
@@ -159,9 +166,12 @@ public class MapValidator {
         int[] sequence = stateToSequence(state);
         int offsets = 0;
         for (int i = 0; i < sequence.length - 1; i++) {
-            if (sequence[i] != 0) {
+            if (sequence[i] != 0)
+            {
                 for (int j = i + 1; j < sequence.length; j++) {
-                    if (sequence[j] != 0 && sequence[j] < sequence[i]) {
+                    if (
+                            sequence[j] != 0 &&
+                            sequence[j] < sequence[i]) {
                         offsets++;
                     }
                 }

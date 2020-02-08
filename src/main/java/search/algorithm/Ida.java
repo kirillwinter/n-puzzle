@@ -30,9 +30,8 @@ public class Ida extends AbstractAlgorithm {
                 return currentBound;
 
             if (smallestBound == Integer.MAX_VALUE) {
-                log.error("NO_FOUND");
+                log.error("NO_FOUND \n" + root.toString());
                 printResult();
-                root.print();
                 System.exit(1);
             }
 

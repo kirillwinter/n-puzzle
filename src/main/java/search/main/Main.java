@@ -12,6 +12,8 @@ import search.node.GoalNodeCreator;
 import search.node.GoalStateEnum;
 import search.node.Node;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,6 +24,7 @@ public class Main {
     private static GoalStateEnum goalStateArg = GoalStateEnum.SNAKE;
     private static HeuristicEnum heuristic = HeuristicEnum.MANHATTAN;
     private static int maxQueue = 100000;
+    private static String pathVis = null;
     private static String fileName;
 
 
@@ -51,10 +54,10 @@ public class Main {
                 break;
             default:
                 goalNode = GoalNodeCreator.createSnakeGoalNode(mapValidator.getSize(), coordinatesGoalNode);
+                mapValidator.checkResolve(goalNode.getState());
                 break;
         }
 
-        mapValidator.checkResolve(goalNode.getState());
         IHeuristicFunction heuristicFunction = new IHeuristicFunction(goalNode, coordinatesGoalNode, heuristic);
 
 
@@ -78,17 +81,18 @@ public class Main {
 
         log.info("time complexity = " + (System.currentTimeMillis() - start) / 1000 + "sec");
         for (Node node : path) {
-            log.info("h=" + node.getH() + " g=" + node.getG());
-            node.print();
+            log.info("h=" + node.getH() + " g=" + node.getG() + "\n" + node.toString() );
+//            System.out.println(node.toString());
         }
         log.info("steps=" + path.size());
+        writeToFile(mapValidator.getSize(), path);
         System.exit(0);
 
     }
 
     private static void readArgs(String[] args) {
 
-        if (args[0] == null) {
+        if (args.length == 0) {
             log.error("Where filename????");
             System.exit(1);
         }
@@ -115,6 +119,8 @@ public class Main {
                 argsMaxQueueSelection(arg);
             } else if (arg.contains("-heuristic=")) {
                 argsHeuristicSelection(arg);
+            }else if (arg.contains("-vis=")) {
+                argsVisSelection(arg);
             } else {
                 log.error("Invalid arg: " + arg);
                 System.exit(1);
@@ -122,6 +128,16 @@ public class Main {
         }
         for (int i = 0; i < args.length; i++)
             log.debug(i + " " + args[i]);
+    }
+
+    private static void argsVisSelection(String arg) {
+        String[] visArgs = arg.split("=");
+        if (visArgs.length == 2) {
+                pathVis = visArgs[1];
+        } else {
+            log.error("Invalid arg: " + arg);
+            System.exit(1);
+        }
     }
 
     private static void argsMaxQueueSelection(String arg) {
@@ -165,6 +181,24 @@ public class Main {
         } else {
             log.error("Invalid arg: " + arg);
             System.exit(1);
+        }
+    }
+
+    private static void writeToFile(int size, List<Node> path){
+        if (pathVis != null){
+            try(FileWriter writer = new FileWriter(pathVis, false)) {
+
+                writer.append(Integer.toString(size));
+                writer.append('\n');
+
+                for (Node node : path) {
+                    writer.append(node.toString());
+                }
+                writer.flush();
+            }
+            catch(IOException ex){
+                log.error(ex.getMessage());
+            }
         }
     }
 
