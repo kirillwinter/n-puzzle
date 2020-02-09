@@ -10,31 +10,31 @@ import java.util.List;
 @Slf4j
 abstract class AbstractAlgorithm {
 
-    Node goalNode;
-    Node endPathNode;
-    HashSet<Node> closeSet = new HashSet<>();
-    long countVisited = 0;
-    long countNotPut = 0;
+	Node goalNode;
+	Node endPathNode;
+	HashSet<Node> closeSet = new HashSet<>();
+	long countVisited = 0;
+	long countNotPut = 0;
 
-    public int main(Node root) {
-        return 0;
-    }
+	public int main(Node root) {
+		return 0;
+	}
 
-    public List<Node> getPath() {
-        ArrayList<Node> path = new ArrayList<>();
+	public List<Node> getPath() {
+		ArrayList<Node> path = new ArrayList<>();
 
-        while (endPathNode != null) {
-            path.add(0, endPathNode);
-            endPathNode = endPathNode.getParent();
-        }
-        return path;
-    }
+		while (endPathNode != null) {
+			path.add(0, endPathNode);
+			endPathNode = endPathNode.getParent();
+		}
+		return path;
+	}
 
-    void printResult() {
-        log.info("countVisited = " + countVisited);
-        log.info("closeSet = " + closeSet.size());
-        log.info("countNotPut = " + countNotPut);
-    }
+	void printResult() {
+		log.info("countVisited = " + countVisited);
+		log.info("closeSet = " + closeSet.size());
+		log.info("countNotPut = " + countNotPut);
+	}
 
 
 }

@@ -12,10 +12,10 @@ import java.util.PriorityQueue;
 
 @Getter
 @Setter
-public class Node implements Comparator<Node>, Serializable {    // Чтобы узнать длину пути, нам нужно помнить предидущие позиции (и не только поэтому)
+public class Node implements Comparator<Node>, Serializable {
 
-    private Node parent;  // ссылка на предыдущий
-    private int[][] state;  // сама позиция
+    private Node parent;
+    private int[][] state;
     private int g = 0;
     private int h = 0;
     private int f = 0;
@@ -24,9 +24,6 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
     private AlgorithmEnum algorithm;
     private IHeuristicFunction heuristicFunction;
 
-
-    public Node() {
-    }
 
     public Node(Node parent, int[][] state, int zeroX, int zeroY, IHeuristicFunction heuristicFunction, AlgorithmEnum algorithm) {
         this.parent = parent;
@@ -141,7 +138,6 @@ public class Node implements Comparator<Node>, Serializable {    // Чтобы �
     }
 
     @Override
-    // TODO может нужно оптимизировать hashCode
     public int hashCode() {
         return Arrays.deepHashCode(state);
     }

@@ -1,6 +1,5 @@
-# puzzle type = snail
-# solved state
+# This puzzle is solvable
 3
-0 1 2
-3 4 5
-6 8 7
+7       4       2
+5       0       6
+1       8       3
